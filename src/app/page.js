@@ -2,12 +2,57 @@
 
 import * as React from 'react';
 import { ThemeProvider } from '@mui/material/styles';
-import { Button, AppBar, Toolbar, Backdrop, CircularProgress } from '@mui/material';
+import {
+  Button,
+  AppBar,
+  Toolbar,
+  CircularProgress,
+  Box,
+  Drawer,
+  List,
+  Divider,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
 import theme from './theme';
 import { FaBars } from 'react-icons/fa';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import MailIcon from '@mui/icons-material/Mail';
 
 export default function App() {
   const [open, setOpen] = React.useState(false);
+
+  const toggleDrawer = (newOpen) => () => {
+    setOpen(newOpen);
+  };
+
+  const DrawerList = (
+    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+      <List>
+        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton>
+              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+      <List>
+        {['All mail', 'Trash', 'Spam'].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton>
+              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
 
   return (
     <>
@@ -15,7 +60,10 @@ export default function App() {
         <AppBar position="fixed">
           <Toolbar>
             <div className="tw-flex-1">
-              <FaBars className="tw-cursor-pointer" />
+              <FaBars onClick={toggleDrawer(true)} className="tw-cursor-pointer" />
+              <Drawer open={open} onClose={toggleDrawer(false)}>
+                {DrawerList}
+              </Drawer>
             </div>
             <div className="logo-box">
               <a href="/" className="tw-font-bold">
@@ -29,16 +77,9 @@ export default function App() {
         </AppBar>
         <Toolbar />
         <section className="tw-h-screen tw-flex tw-items-center tw-justify-center tw-text-[5rem]">
-          section
+          <Button onClick={toggleDrawer(true)}>Open drawer</Button>
         </section>
       </ThemeProvider>
-      <Button onClick={() => setOpen(true)}>Show backdrop</Button>
-      <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={open}
-        onClick={() => setOpen(false)}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
     </>
   );
 }

@@ -158,8 +158,8 @@ const App = () => {
 
   React.useEffect(() => {
     todosState.addTodo('스쿼트');
-    // todosState.addTodo('벤치');
-    // todosState.addTodo('데드');
+    todosState.addTodo('벤치');
+    todosState.addTodo('데드');
   }, []);
 
   const onSubmit = (e) => {
@@ -186,6 +186,7 @@ const App = () => {
         <Toolbar>
           <div className="tw-flex-1">
             <FaBars onClick={() => setOpen(true)} className="tw-cursor-pointer" />
+            rounded
           </div>
           <div className="logo-box">
             <a href="/" className="tw-font-bold">

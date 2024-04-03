@@ -212,7 +212,9 @@ const App = () => {
               <div className="tw-flex tw-flex-col tw-gap-2 tw-mt-[30px]">
                 <Chip label={`번호 : ${todo.id}`} variant="outlined"></Chip>
                 <Chip label={`날짜 : ${todo.regDate}`} variant="outlined"></Chip>
-                <Chip label={`할 일 : ${todo.content}`} variant="outlined" color="primary"></Chip>
+                <div className="tw-p-10 tw-rounded-[20px] tw-shadow tw-whitespace-pre-wrap tw-leading-relaxed">
+                  할 일 : {todo.content}
+                </div>
               </div>
             </li>
           ))}

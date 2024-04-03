@@ -186,12 +186,21 @@ const App = () => {
       </AppBar>
       <Toolbar />
       <form className="tw-flex tw-flex-col tw-p-4 tw-gap-2" onSubmit={onSubmit}>
-        <TextField id="outlined-basic" label="할 일을 입력해" variant="outlined" />
+        <TextField id="outlined-basic" label="할 일을 입력해" name="title" variant="outlined" />
         <Button className="tw-font-bold" variant="contained" type="submit">
           추가
         </Button>
       </form>
-      {todoState.todos.length}
+      할일 갯수 : {todoState.todos.length}
+      <ul>
+        {todoState.todos.map((todo, index) => (
+          <li key="index">
+            번호 : {todo.id}
+            날짜 : {todo.regDate}
+            내용 : {todo.title}
+          </li>
+        ))}
+      </ul>
     </>
   );
 };

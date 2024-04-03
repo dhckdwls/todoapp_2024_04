@@ -11,12 +11,12 @@ const useTodoStatus = () => {
   const [todos, setTodos] = React.useState([]);
   const lastTodoIdRef = React.useRef(0);
 
-  const addTodo = (newTitle) => {
+  const addTodo = (newContent) => {
     const id = ++lastTodoIdRef.current;
 
     const newTodo = {
       id,
-      title: newTitle,
+      content: newContent,
       regDate: dateToStr(new Date()),
     };
     setTodos([...todos, newTodo]);
@@ -27,8 +27,8 @@ const useTodoStatus = () => {
     setTodos(newTodos);
   };
 
-  const modifyTodo = (id, title) => {
-    const newTodos = todos.map((todo) => (todo.id != id ? todo : { ...todo, title }));
+  const modifyTodo = (id, content) => {
+    const newTodos = todos.map((todo) => (todo.id != id ? todo : { ...todo, content }));
     setTodos(newTodos);
   };
 
@@ -154,17 +154,17 @@ const App = () => {
 
     const form = e.currentTarget;
 
-    form.title.value = form.title.value.trim();
+    form.content.value = form.content.value.trim();
 
-    if (form.title.value.length == 0) {
+    if (form.content.value.length == 0) {
       alert('할 일 써');
-      form.title.focus();
+      form.content.focus();
       return;
     }
 
-    todoState.addTodo(form.title.value);
-    form.title.value = '';
-    form.title.focus();
+    todoState.addTodo(form.content.value);
+    form.content.value = '';
+    form.content.focus();
   };
 
   return (
@@ -186,21 +186,25 @@ const App = () => {
       </AppBar>
       <Toolbar />
       <form className="tw-flex tw-flex-col tw-p-4 tw-gap-2" onSubmit={onSubmit}>
-        <TextField id="outlined-basic" label="할 일을 입력해" name="title" variant="outlined" />
+        <TextField name="content" autoComplete="off" label="할 일을 입력해" variant="outlined" />
         <Button className="tw-font-bold" variant="contained" type="submit">
           추가
         </Button>
       </form>
-      할일 갯수 : {todoState.todos.length}
-      <ul>
-        {todoState.todos.map((todo, index) => (
-          <li key="index">
-            번호 : {todo.id}
-            날짜 : {todo.regDate}
-            내용 : {todo.title}
-          </li>
-        ))}
-      </ul>
+      할 일 갯수 : {todoState.todos.length}
+      <nav>
+        <ul>
+          {todoState.todos.map((todo) => (
+            <li key={todo.id}>
+              <div className="tw-flex tw-flex-col tw-gap-2">
+                <span>번호 : {todo.id}</span>
+                <span>날짜 : {todo.regDate}</span>
+                <span>할 일 : {todo.content}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </>
   );
 };

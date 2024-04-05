@@ -95,7 +95,7 @@ function useTodosStatus() {
   };
 }
 
-const NewTodoForm = ({ todosState }) => {
+const NewTodoForm = ({ todosState, noticeSnackBarStatus }) => {
   const onSubmit = (e) => {
     e.preventDefault();
 
@@ -111,6 +111,7 @@ const NewTodoForm = ({ todosState }) => {
 
     todosState.addTodo(form.content.value);
     form.content.value = '';
+    noticeSnackBarStatus.open('글이 생성되었습니다.');
     form.content.focus();
   };
 
@@ -214,7 +215,7 @@ function useEditTodoModalStatus() {
   };
 }
 
-function EditTodoModal({ status, todosState, todo }) {
+function EditTodoModal({ status, todosState, todo, noticeSnackBarStatus }) {
   const onSubmit = (e) => {
     e.preventDefault();
 
@@ -230,6 +231,7 @@ function EditTodoModal({ status, todosState, todo }) {
 
     // modify v1
     todosState.modifyTodo(todo.id, form.content.value);
+    noticeSnackBarStatus.open('수정되었습니다.');
     status.close();
 
     // modify v2
@@ -264,7 +266,7 @@ function EditTodoModal({ status, todosState, todo }) {
   );
 }
 
-function TodoOptionDrawer({ status, todosState }) {
+function TodoOptionDrawer({ status, todosState, noticeSnackBarStatus }) {
   const removeTodo = () => {
     if (confirm(`${status.todoId}번 할 일을 삭제하시겠습니까?`) == false) {
       status.close();
@@ -272,6 +274,7 @@ function TodoOptionDrawer({ status, todosState }) {
     }
 
     todosState.removeTodo(status.todoId);
+    noticeSnackBarStatus.open('글이 삭제 되었습니다.');
     status.close();
   };
 
@@ -281,7 +284,12 @@ function TodoOptionDrawer({ status, todosState }) {
 
   return (
     <>
-      <EditTodoModal status={editTodoModalStatus} todosState={todosState} todo={todo} />
+      <EditTodoModal
+        status={editTodoModalStatus}
+        todosState={todosState}
+        todo={todo}
+        noticeSnackBarStatus={noticeSnackBarStatus}
+      />
       <SwipeableDrawer anchor="top" open={status.opened} onClose={status.close} onOpen={() => {}}>
         <List>
           <ListItem className="tw-flex tw-gap-2 tw-p-[15px]">
@@ -307,12 +315,16 @@ function TodoOptionDrawer({ status, todosState }) {
   );
 }
 
-const TodoList = ({ todosState }) => {
+const TodoList = ({ todosState, noticeSnackBarStatus }) => {
   const todoOptionDrawerStatus = useTodoOptionDrawerStatus();
 
   return (
     <>
-      <TodoOptionDrawer status={todoOptionDrawerStatus} todosState={todosState} />
+      <TodoOptionDrawer
+        status={todoOptionDrawerStatus}
+        todosState={todosState}
+        noticeSnackBarStatus={noticeSnackBarStatus}
+      />
       <nav>
         할 일 갯수 : {todosState.todos.length}
         <ul>
@@ -405,8 +417,8 @@ function App() {
       </AppBar>
       <Toolbar />
       <NoticeSnackbar status={noticeSnackbarState} />
-      <NewTodoForm todosState={todosState} />
-      <TodoList todosState={todosState} />
+      <NewTodoForm todosState={todosState} noticeSnackBarStatus={noticeSnackbarState} />
+      <TodoList todosState={todosState} noticeSnackBarStatus={noticeSnackbarState} />
     </>
   );
 }

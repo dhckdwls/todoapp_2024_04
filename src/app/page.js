@@ -263,15 +263,19 @@ function EditTodoModal({ status, todosState, todo }) {
 }
 
 function TodoOptionDrawer({ status, todosState }) {
+  const removeTodo = () => {
+    if (confirm(`${status.todoId}번 할 일을 삭제하시겠습니까?`) == false) {
+      status.close();
+      return;
+    }
+
+    todosState.removeTodo(status.todoId);
+    status.close();
+  };
+
   const editTodoModalStatus = useEditTodoModalStatus();
 
   const todo = todosState.findTodoById(status.todoId);
-
-  const deleteTodo = (id) => {
-    todosState.removeTodo(id);
-    status.close();
-    return;
-  };
 
   return (
     <>
@@ -290,10 +294,8 @@ function TodoOptionDrawer({ status, todosState }) {
             <FaPenToSquare className="block tw-mt-[-5px]" />
           </ListItemButton>
           <ListItemButton
-            onClick={() => {
-              deleteTodo(status.todoId);
-            }}
-            className="tw-p-[15px_20px] tw-flex tw-gap-2 tw-items-center">
+            className="tw-p-[15px_20px] tw-flex tw-gap-2 tw-items-center"
+            onClick={removeTodo}>
             <span>삭제</span>
             <FaTrash className="block tw-mt-[-5px]" />
           </ListItemButton>

@@ -267,6 +267,12 @@ function TodoOptionDrawer({ status, todosState }) {
 
   const todo = todosState.findTodoById(status.todoId);
 
+  const deleteTodo = (id) => {
+    todosState.removeTodo(id);
+    status.close();
+    return;
+  };
+
   return (
     <>
       <EditTodoModal status={editTodoModalStatus} todosState={todosState} todo={todo} />
@@ -283,7 +289,11 @@ function TodoOptionDrawer({ status, todosState }) {
             <span>수정</span>
             <FaPenToSquare className="block tw-mt-[-5px]" />
           </ListItemButton>
-          <ListItemButton className="tw-p-[15px_20px] tw-flex tw-gap-2 tw-items-center">
+          <ListItemButton
+            onClick={() => {
+              deleteTodo(status.todoId);
+            }}
+            className="tw-p-[15px_20px] tw-flex tw-gap-2 tw-items-center">
             <span>삭제</span>
             <FaTrash className="block tw-mt-[-5px]" />
           </ListItemButton>

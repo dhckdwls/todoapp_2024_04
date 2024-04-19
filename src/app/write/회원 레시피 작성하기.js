@@ -1,9 +1,8 @@
 'use client';
 import React, { useState, useRef } from 'react';
-import RootTheme from './theme';
-import connection from './db';
-
 import classNames from 'classnames';
+import RootTheme from './theme';
+import dateToStr from './dateUtil';
 
 import {
   AppBar,
@@ -13,6 +12,9 @@ import {
   BottomNavigationAction,
   TextField,
   Button,
+  List,
+  ListItem,
+  ListItemText,
 } from '@mui/material';
 
 import RestoreIcon from '@mui/icons-material/Restore';
@@ -21,34 +23,20 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 function App() {
   const [value, setValue] = useState(0);
+  const [files, setFiles] = useState([]);
+  const inputFileRef = useRef(null);
+
+  const handleFileUpload = (e) => {
+    const newFiles = Array.from(e.target.files);
+    setFiles([...files, ...newFiles]);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-
-    // formData에서 제목과 내용을 추출합니다.
-    const title = formData.get('title');
-    const content = formData.get('content');
-
-    // 서버에 데이터를 전송합니다.
-    fetch('/api/posts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ title, content }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to insert post into database');
-        }
-        console.log('게시물이 성공적으로 추가되었습니다.');
-        setFiles([]); // 파일 목록 초기화
-      })
-      .catch((error) => {
-        console.error('게시물 삽입 중 오류 발생:', error);
-      });
+    // 폼 제출 관련 작업을 수행합니다.
+    console.log('Form submitted');
   };
+
   return (
     <>
       <AppBar position="fixed">
@@ -59,6 +47,27 @@ function App() {
       <div>
         <form onSubmit={handleSubmit} className="tw-flex tw-flex-col tw-p-4 tw-gap-2">
           <TextField name="title" autoComplete="off" label="제목을 입력해주세요" />
+          <Button
+            variant="contained"
+            className="tw-font-bold"
+            onClick={() => inputFileRef.current.click()} // 파일 선택 창 열기
+          >
+            파일 첨부하기
+          </Button>
+          <input
+            type="file"
+            ref={inputFileRef}
+            style={{ display: 'none' }}
+            onChange={handleFileUpload}
+            multiple // 여러 파일 선택 가능
+          />
+          <List>
+            {files.map((file, index) => (
+              <ListItem key={index}>
+                <ListItemText primary={file.name} />
+              </ListItem>
+            ))}
+          </List>
 
           <TextField
             minRows={3}

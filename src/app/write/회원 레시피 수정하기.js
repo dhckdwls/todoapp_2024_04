@@ -87,10 +87,10 @@ function App() {
           />
           <div className="tw-flex tw-justify-around">
             <Button variant="contained" className="tw-font-bold" type="submit">
-              작성취소
+              수정취소
             </Button>
             <Button variant="contained" className="tw-font-bold" type="submit">
-              작성하기
+              수정하기
             </Button>
           </div>
         </form>

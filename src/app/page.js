@@ -1,64 +1,60 @@
+// src/app/page.js
 'use client';
-import React, { useState, useRef } from 'react';
-import RootTheme from './theme';
-import connection from './db';
 
-import classNames from 'classnames';
+import React, { useState } from 'react';
+import { TextField, Button } from '@mui/material';
 
-import {
-  AppBar,
-  Toolbar,
-  Box,
-  BottomNavigation,
-  BottomNavigationAction,
-  TextField,
-  Button,
-} from '@mui/material';
+const API_ENDPOINT = '/api/articleWrite'; // 서버의 API 엔드포인트
 
-import RestoreIcon from '@mui/icons-material/Restore';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
+export default function themeApp() {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [error, setError] = useState(null);
 
-function App() {
-  const [value, setValue] = useState(0);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-
-    // formData에서 제목과 내용을 추출합니다.
-    const title = formData.get('title');
-    const content = formData.get('content');
-
-    // 서버에 데이터를 전송합니다.
-    fetch('/api/posts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ title, content }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to insert post into database');
-        }
-        console.log('게시물이 성공적으로 추가되었습니다.');
-        setFiles([]); // 파일 목록 초기화
-      })
-      .catch((error) => {
-        console.error('게시물 삽입 중 오류 발생:', error);
+    try {
+      const response = await fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title, content }),
       });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to save data');
+      }
+
+      console.log('Data saved successfully');
+
+      setTitle('');
+      setContent('');
+      setError(null);
+    } catch (error) {
+      console.error('Error saving data:', error);
+      setError('데이터 저장 중 오류가 발생했습니다.');
+    }
   };
+
   return (
     <>
-      <AppBar position="fixed">
-        <Toolbar />
-      </AppBar>
-      <Toolbar />
-
       <div>
-        <form onSubmit={handleSubmit} className="tw-flex tw-flex-col tw-p-4 tw-gap-2">
-          <TextField name="title" autoComplete="off" label="제목을 입력해주세요" />
+        <form className="tw-flex tw-flex-col tw-p-4 tw-gap-2" onSubmit={handleSubmit}>
+          <div className="tw-flex tw-items-center">
+            <div>제목 : </div>
+            <TextField
+              className="tw-flex-1"
+              name="title"
+              autoComplete="off"
+              label="제목을 입력해주세요"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+            />
+          </div>
 
           <TextField
             minRows={3}
@@ -67,36 +63,20 @@ function App() {
             name="content"
             autoComplete="off"
             label="내용을 입력해주세요"
+            value={content}
+            onChange={(event) => setContent(event.target.value)}
           />
-          <Button variant="contained" className="tw-font-bold" type="submit">
-            작성하기
-          </Button>
-          <Button variant="contained" className="tw-font-bold" type="submit">
-            작성취소
-          </Button>
+          <div className="tw-flex tw-justify-around">
+            <Button variant="contained" className="tw-font-bold" type="reset">
+              작성취소
+            </Button>
+            <Button variant="contained" className="tw-font-bold" type="submit">
+              작성하기
+            </Button>
+          </div>
         </form>
+        {error && <div className="error-message">{error}</div>}
       </div>
-
-      <BottomNavigation />
-      <Box sx={{ position: 'fixed', bottom: 0, left: 0, width: '100%' }}>
-        <BottomNavigation
-          showLabels
-          value={value}
-          onChange={(event, newValue) => {
-            setValue(newValue);
-          }}>
-          <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
-          <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
-          <BottomNavigationAction label="Nearby" icon={<LocationOnIcon />} />
-          <BottomNavigationAction label="Nearby" icon={<LocationOnIcon />} />
-        </BottomNavigation>
-      </Box>
     </>
   );
-}
-
-export default function themeApp() {
-  const theme = RootTheme();
-
-  return <App />;
 }

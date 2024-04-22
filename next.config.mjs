@@ -1,3 +1,8 @@
+// /** @type {import('next').NextConfig} */
+// const nextConfig = { reactStrictMode: false, swcMinify: true };
+
+// export default nextConfig;
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
@@ -9,7 +14,8 @@ const nextConfig = {
         fs: false,
         net: false,
         tls: false,
-        mysql: false, // MySQL 관련 모듈을 클라이언트 측에서 불러오지 못하도록 설정
+        mysql: false,
+        // MySQL 관련 모듈을 클라이언트 측에서 불러오지 못하도록 설정
       };
     }
 

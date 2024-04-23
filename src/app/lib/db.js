@@ -1,20 +1,25 @@
-import mysql from 'mysql';
+// src/app/lib/db.js
 
-// MySQL 연결 정보
-const connection = mysql.createConnection({
+const mysql = require('mysql2/promise');
+
+// MySQL 연결 설정
+const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
-  password: '',
+  password: '', // 패스워드 입력
   database: 'teamproject_24_04',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  port: 3306,
 });
 
-// 연결 시작
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to database: ', err);
-    return;
-  }
-  console.log('Connected to the database.');
-});
+// 쿼리 실행 함수
+async function query(sql, values) {
+  const [rows, fields] = await pool.execute(sql, values);
+  return rows;
+}
 
-export default connection;
+module.exports = {
+  query,
+};

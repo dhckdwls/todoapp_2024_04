@@ -47,6 +47,9 @@ function App() {
       <div>
         <form onSubmit={handleSubmit} className="tw-flex tw-flex-col tw-p-4 tw-gap-2">
           <div className="tw-flex tw-items-center">
+            <div>카테고리 : </div>
+          </div>
+          <div className="tw-flex tw-items-center ">
             <div>제목 : </div>
             <TextField
               className="tw-flex-1"
@@ -87,10 +90,10 @@ function App() {
           />
           <div className="tw-flex tw-justify-around">
             <Button variant="contained" className="tw-font-bold" type="submit">
-              작성취소
+              수정취소
             </Button>
             <Button variant="contained" className="tw-font-bold" type="submit">
-              작성하기
+              수정하기
             </Button>
           </div>
         </form>

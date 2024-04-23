@@ -1,49 +1,79 @@
-// src/app/page.js
 'use client';
+import React, { useState, useRef } from 'react';
+import classNames from 'classnames';
+import RootTheme from './theme';
+import dateToStr from './dateUtil';
 
-import React, { useState } from 'react';
-import { TextField, Button } from '@mui/material';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  BottomNavigation,
+  BottomNavigationAction,
+  TextField,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+} from '@mui/material';
 
-const API_ENDPOINT = '/api/articleWrite'; // 서버의 API 엔드포인트
+import RestoreIcon from '@mui/icons-material/Restore';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
-export default function themeApp() {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [error, setError] = useState(null);
+function App() {
+  const [value, setValue] = useState(0);
+  const [files, setFiles] = useState([]);
+  const inputFileRef = useRef(null);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const [age, setAge] = React.useState('');
 
-    try {
-      const response = await fetch(API_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title, content }),
-      });
+  const handleChange = (event) => {
+    setAge(event.target.value);
+  };
 
-      const data = await response.json();
+  const handleFileUpload = (e) => {
+    const newFiles = Array.from(e.target.files);
+    setFiles([...files, ...newFiles]);
+  };
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to save data');
-      }
-
-      console.log('Data saved successfully');
-
-      setTitle('');
-      setContent('');
-      setError(null);
-    } catch (error) {
-      console.error('Error saving data:', error);
-      setError('데이터 저장 중 오류가 발생했습니다.');
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // 폼 제출 관련 작업을 수행합니다.
+    console.log('Form submitted');
   };
 
   return (
     <>
+      <AppBar position="fixed">
+        <Toolbar />
+      </AppBar>
+      <Toolbar />
+
       <div>
-        <form className="tw-flex tw-flex-col tw-p-4 tw-gap-2" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="tw-flex tw-flex-col tw-p-4 tw-gap-2">
+          <div className="tw-flex tw-items-center">
+            <div>카테고리 : </div>
+            <Box sx={{ minWidth: '70%' }}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">카테고리를 골라주세요</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={age}
+                  label="Age"
+                  onChange={handleChange}>
+                  <MenuItem value={10}>회원레시피</MenuItem>
+                  <MenuItem value={20}>유튜버레시피</MenuItem>
+                  <MenuItem value={30}>자유게시판</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          </div>
           <div className="tw-flex tw-items-center">
             <div>제목 : </div>
             <TextField
@@ -51,10 +81,29 @@ export default function themeApp() {
               name="title"
               autoComplete="off"
               label="제목을 입력해주세요"
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
             />
           </div>
+          <Button
+            variant="contained"
+            className="tw-font-bold"
+            onClick={() => inputFileRef.current.click()} // 파일 선택 창 열기
+          >
+            파일 첨부하기
+          </Button>
+          <input
+            type="file"
+            ref={inputFileRef}
+            style={{ display: 'none' }}
+            onChange={handleFileUpload}
+            multiple // 여러 파일 선택 가능
+          />
+          <List>
+            {files.map((file, index) => (
+              <ListItem key={index}>
+                <ListItemText primary={file.name} />
+              </ListItem>
+            ))}
+          </List>
 
           <TextField
             minRows={3}
@@ -63,11 +112,9 @@ export default function themeApp() {
             name="content"
             autoComplete="off"
             label="내용을 입력해주세요"
-            value={content}
-            onChange={(event) => setContent(event.target.value)}
           />
           <div className="tw-flex tw-justify-around">
-            <Button variant="contained" className="tw-font-bold" type="reset">
+            <Button variant="contained" className="tw-font-bold" type="submit">
               작성취소
             </Button>
             <Button variant="contained" className="tw-font-bold" type="submit">
@@ -75,8 +122,28 @@ export default function themeApp() {
             </Button>
           </div>
         </form>
-        {error && <div className="error-message">{error}</div>}
       </div>
+
+      <BottomNavigation />
+      <Box sx={{ position: 'fixed', bottom: 0, left: 0, width: '100%' }}>
+        <BottomNavigation
+          showLabels
+          value={value}
+          onChange={(event, newValue) => {
+            setValue(newValue);
+          }}>
+          <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
+          <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
+          <BottomNavigationAction label="Nearby" icon={<LocationOnIcon />} />
+          <BottomNavigationAction label="Nearby" icon={<LocationOnIcon />} />
+        </BottomNavigation>
+      </Box>
     </>
   );
+}
+
+export default function themeApp() {
+  const theme = RootTheme();
+
+  return <App />;
 }

@@ -15,6 +15,10 @@ import {
   List,
   ListItem,
   ListItemText,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
 } from '@mui/material';
 
 import RestoreIcon from '@mui/icons-material/Restore';
@@ -25,6 +29,12 @@ function App() {
   const [value, setValue] = useState(0);
   const [files, setFiles] = useState([]);
   const inputFileRef = useRef(null);
+
+  const [age, setAge] = React.useState('');
+
+  const handleChange = (event) => {
+    setAge(event.target.value);
+  };
 
   const handleFileUpload = (e) => {
     const newFiles = Array.from(e.target.files);
@@ -46,6 +56,24 @@ function App() {
 
       <div>
         <form onSubmit={handleSubmit} className="tw-flex tw-flex-col tw-p-4 tw-gap-2">
+          <div className="tw-flex tw-items-center">
+            <div>제목 : </div>
+            <Box sx={{ minWidth: 120 }}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">카테고리를 골라주세요</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={age}
+                  label="Age"
+                  onChange={handleChange}>
+                  <MenuItem value={10}>회원레시피</MenuItem>
+                  <MenuItem value={20}>유튜버레시피</MenuItem>
+                  <MenuItem value={30}>자유게시판</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          </div>
           <div className="tw-flex tw-items-center">
             <div>제목 : </div>
             <TextField
@@ -87,10 +115,10 @@ function App() {
           />
           <div className="tw-flex tw-justify-around">
             <Button variant="contained" className="tw-font-bold" type="submit">
-              수정취소
+              작성취소
             </Button>
             <Button variant="contained" className="tw-font-bold" type="submit">
-              수정하기
+              작성하기
             </Button>
           </div>
         </form>

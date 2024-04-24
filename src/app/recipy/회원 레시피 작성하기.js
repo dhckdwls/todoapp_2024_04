@@ -57,8 +57,8 @@ function App() {
       <div>
         <form onSubmit={handleSubmit} className="tw-flex tw-flex-col tw-p-4 tw-gap-2">
           <div className="tw-flex tw-items-center">
-            <div>제목 : </div>
-            <Box sx={{ minWidth: 120 }}>
+            <div>카테고리 : </div>
+            <Box sx={{ minWidth: '70%' }}>
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">카테고리를 골라주세요</InputLabel>
                 <Select

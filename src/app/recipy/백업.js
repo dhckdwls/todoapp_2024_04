@@ -1,18 +1,24 @@
 'use client';
-import * as React from 'react';
+import React, { useState, useRef } from 'react';
 import classNames from 'classnames';
 import RootTheme from './theme';
+
 import RecipyDetail from '../app/recipy/recipyDetail';
+import Write from './recipy/Write';
 
 import { AppBar, Toolbar, Box, BottomNavigation, BottomNavigationAction } from '@mui/material';
 
-import RestoreIcon from '@mui/icons-material/Restore';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
+import {
+  Person as PersonIcon,
+  ShoppingBag as ShoppingBagIcon,
+  Navigation as NavigationIcon,
+  Forum as ForumIcon,
+  Receipt as ReceiptIcon,
+} from '@mui/icons-material';
 
 function App() {
   const [bottomValue, setBottomValue] = React.useState(0);
-
+  const [selectedTab, setSelectedTab] = useState('RecipyDetail');
   return (
     <>
       <AppBar position="fixed">
@@ -20,8 +26,8 @@ function App() {
       </AppBar>
       <Toolbar />
 
-      <RecipyDetail />
-      <div>second Page</div>
+      {/* 삼항 연산자를 사용하여 BottomNavigationAction을 클릭했을 때, 해당하는 컴포넌트를 렌더링 */}
+      {selectedTab === 'RecipyDetail' ? <RecipyDetail /> : <Write />}
 
       <BottomNavigation />
       <Box sx={{ position: 'fixed', bottom: 0, left: 0, width: '100%' }}>
@@ -31,10 +37,11 @@ function App() {
           onChange={(event, newValue) => {
             setBottomValue(newValue);
           }}>
-          <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
-          <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
-          <BottomNavigationAction label="Nearby" icon={<LocationOnIcon />} />
-          <BottomNavigationAction label="Nearby" icon={<LocationOnIcon />} />
+          <BottomNavigationAction label="쇼핑" icon={<ShoppingBagIcon />} />
+          <BottomNavigationAction label="레시피" icon={<ReceiptIcon />} />
+          <BottomNavigationAction label="커뮤니티" icon={<ForumIcon />} />
+          <BottomNavigationAction label="길찾기" icon={<NavigationIcon />} />
+          <BottomNavigationAction label="마이페이지" icon={<PersonIcon />} />
         </BottomNavigation>
       </Box>
     </>

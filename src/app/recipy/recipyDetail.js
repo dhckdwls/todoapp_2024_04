@@ -29,24 +29,20 @@ function RecipyDetail() {
           </Button>
         </div>
       </div>
-      <div style={{ display: 'flex', overflowX: 'auto', padding: '10px' }}>
-        <img
-          src="https://picsum.photos/id/237/200/300"
-          style={{ marginLeft: '10px', marginRight: '10px' }}
-        />
-        <img
-          src="https://picsum.photos/id/237/200/300"
-          style={{ marginLeft: '10px', marginRight: '10px' }}
-        />
-        <img
-          src="https://picsum.photos/id/237/200/300"
-          style={{ marginLeft: '10px', marginRight: '10px' }}
-        />
-        <img
-          src="https://picsum.photos/id/237/200/300"
-          style={{ marginLeft: '10px', marginRight: '10px' }}
-        />
+      <div className="img-box tw-border-2 tw-border-red-500 ">
+        <ul className="tw-flex">
+          <li style={{ marginLeft: '10px', marginRight: '10px' }}>
+            <img src="https://picsum.photos/id/237/200/300" />
+          </li>
+          <li style={{ marginLeft: '10px', marginRight: '10px' }}>
+            <img src="https://picsum.photos/id/237/200/300" />
+          </li>
+          <li style={{ marginLeft: '10px', marginRight: '10px' }}>
+            <img src="https://picsum.photos/id/237/200/300" />
+          </li>
+        </ul>
       </div>
+
       <div className="content-box">
         준비재료 : 앞다리살 600g, 양념 1통 , 양파 반개 고기를 삶는다 삶을때 양파를 넣어준다 그 후에
         양넘을 발라서 구워준다

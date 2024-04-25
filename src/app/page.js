@@ -1,66 +1,150 @@
-// src/app/page.js
 'use client';
-import React, { useState, useEffect } from 'react';
-import mysql from 'mysql';
+import React, { useState, useRef } from 'react';
+import classNames from 'classnames';
+import RootTheme from './theme';
 
-const conn = {
-  host: 'localhost',
-  port: 3306,
-  user: 'root',
-  password: '', // Enter your password here
-  database: 'teamProject_24_04',
-};
-
-const handleMysql = () => {
-  return new Promise((resolve, reject) => {
-    const connection = mysql.createConnection(conn);
-
-    connection.connect((err) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      let sql = 'SELECT * FROM article';
-      connection.query(sql, (error, data, fields) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(data);
-        }
-        connection.end();
-      });
-    });
-  });
-};
-
-const App = () => {
-  const [articles, setArticles] = useState([]);
-
-  useEffect(() => {
-    // Call handleMysql and update state with the returned data
-    handleMysql()
-      .then((result) => {
-        setArticles(result);
-      })
-      .catch((error) => {
-        console.error(error); // Handle any errors
-      });
-  }, []); // Empty dependency array to ensure the effect runs only once
-
+import { Button, TextField } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import InsertCommentIcon from '@mui/icons-material/InsertComment';
+function App() {
   return (
-    <div>
-      <h1>Articles</h1>
-      <ul>
-        {articles.map((article) => (
-          <li key={article.id}>
-            <h2>{article.title}</h2>
-            <p>{article.content}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
+    <>
+      <div className="tw-flex" style={{ border: '2px solid red' }}>
+        <div style={{ width: '70%', border: '2px solid red' }}>
+          <Button>
+            <ArrowBackIcon />
+            게시판으로 이동
+          </Button>
+          <h1>제목</h1>
+          <h1>작성일</h1>
+          <Button>
+            <FavoriteIcon></FavoriteIcon>
+            {'10'}
+          </Button>
+          <InsertCommentIcon></InsertCommentIcon>
+          {'10'}
+          <Button variant="contained">수정</Button>
+          <Button variant="contained">삭제</Button>
+        </div>
+        <div style={{ width: '30%', border: '2px solid red' }}>
+          <img
+            style={{ height: '100px', width: '100px', borderRadius: '5%' }}
+            src="https://picsum.photos/id/237/200/300"
+          />
+        </div>
+      </div>
 
-export default App;
+      <div style={{ padding: '10px', border: '2px solid red', margin: '20px 0' }}>
+        <div>
+          <img src="https://picsum.photos/id/237/200/300" alt="" />
+          <img src="https://picsum.photos/id/237/200/300" alt="" />
+          <img src="https://picsum.photos/id/237/200/300" alt="" />
+          <img src="https://picsum.photos/id/237/200/300" alt="" />
+          <div>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Est incidunt quisquam delectus
+            sed aliquid voluptatem culpa assumenda maiores ea dicta exercitationem minima mollitia
+            aut blanditiis aspernatur, error voluptatum dolores quos!
+          </div>
+        </div>
+      </div>
+
+      <div style={{ textAlign: 'center' }}>
+        <h1>댓글</h1>
+        <ul>
+          <li className="tw-flex tw-items-center">
+            <img
+              style={{ width: '100px', height: '100px', borderRadius: '100%' }}
+              src="https://picsum.photos/id/237/200/300"
+            />
+            <div style={{ border: '2px solid red', width: '70%' }}>
+              <h1>회원1</h1>
+              <h1>너무 맜있겟다</h1>
+              <h1>2024.04.25 11:07</h1>
+              <Button variant="contained">답글</Button>
+              <Button variant="contained">수정</Button>
+              <Button variant="contained">삭제</Button>
+            </div>
+          </li>
+          <li className="tw-flex tw-items-center">
+            <img
+              style={{ width: '100px', height: '100px', borderRadius: '100%' }}
+              src="https://picsum.photos/id/237/200/300"
+            />
+            <div style={{ border: '2px solid red', width: '70%' }}>
+              <h1>회원1</h1>
+              <h1>너무 맜있겟다</h1>
+              <h1>2024.04.25 11:07</h1>
+              <Button variant="contained">답글</Button>
+              <Button variant="contained">수정</Button>
+              <Button variant="contained">삭제</Button>
+            </div>
+          </li>
+          <li className="tw-flex tw-items-center">
+            <img
+              style={{ width: '100px', height: '100px', borderRadius: '100%' }}
+              src="https://picsum.photos/id/237/200/300"
+            />
+            <div style={{ border: '2px solid red', width: '70%' }}>
+              <h1>회원1</h1>
+              <h1>너무 맜있겟다</h1>
+              <h1>2024.04.25 11:07</h1>
+              <Button variant="contained">답글</Button>
+              <Button variant="contained">수정</Button>
+              <Button variant="contained">삭제</Button>
+            </div>
+          </li>
+          <li className="tw-flex tw-items-center">
+            <img
+              style={{ width: '100px', height: '100px', borderRadius: '100%' }}
+              src="https://picsum.photos/id/237/200/300"
+            />
+            <div style={{ border: '2px solid red', width: '70%' }}>
+              <h1>회원1</h1>
+              <h1>너무 맜있겟다</h1>
+              <h1>2024.04.25 11:07</h1>
+              <Button variant="contained">답글</Button>
+              <Button variant="contained">수정</Button>
+              <Button variant="contained">삭제</Button>
+            </div>
+          </li>
+          <li className="tw-flex tw-items-center">
+            <img
+              style={{ width: '100px', height: '100px', borderRadius: '100%' }}
+              src="https://picsum.photos/id/237/200/300"
+            />
+            <div style={{ border: '2px solid red', width: '70%' }}>
+              <h1>회원1</h1>
+              <h1>너무 맜있겟다</h1>
+              <h1>2024.04.25 11:07</h1>
+              <Button variant="contained">답글</Button>
+              <Button variant="contained">수정</Button>
+              <Button variant="contained">삭제</Button>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div style={{ height: '100px' }}></div>
+      <div
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          width: '100%',
+          backgroundColor: '#afafaf',
+        }}>
+        <form action="">
+          <TextField style={{ width: '100%' }} id="outlined-basic" label="댓글 작성" />
+          <Button style={{ width: '100%' }} variant="contained" type="submit">
+            댓글 작성
+          </Button>
+        </form>
+      </div>
+    </>
+  );
+}
+
+export default function themeApp() {
+  const theme = RootTheme();
+
+  return <App />;
+}

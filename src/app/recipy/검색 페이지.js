@@ -2,29 +2,8 @@
 import React, { useState, useRef } from 'react';
 import classNames from 'classnames';
 import RootTheme from './theme';
-import dateToStr from './dateUtil';
 
-import {
-  AppBar,
-  Toolbar,
-  Box,
-  BottomNavigation,
-  BottomNavigationAction,
-  TextField,
-  Button,
-  List,
-  ListItem,
-  ListItemText,
-  Typography,
-  Tab,
-  Tabs,
-  Input,
-} from '@mui/material';
-
-import RestoreIcon from '@mui/icons-material/Restore';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import SearchIcon from '@mui/icons-material/Search';
+import { Box, Button, Tab, Tabs } from '@mui/material';
 
 import PropTypes from 'prop-types';
 
@@ -61,7 +40,7 @@ function a11yProps(index) {
   };
 }
 
-function App() {
+function SearchPage() {
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
@@ -70,20 +49,6 @@ function App() {
 
   return (
     <>
-      <AppBar position="fixed">
-        <Toolbar>
-          <TextField
-            style={{ width: '100%' }}
-            id="outlined-basic"
-            label="검색"
-            variant="filled"
-            sx={{ backgroundColor: 'white' }}
-          />
-          <SearchIcon style={{ marginLeft: '5px' }}></SearchIcon>
-        </Toolbar>
-      </AppBar>
-      <Toolbar />
-
       <Box sx={{ width: '100%' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
@@ -156,27 +121,8 @@ function App() {
           </ul>
         </CustomTabPanel>
       </Box>
-
-      <BottomNavigation />
-      <Box sx={{ position: 'fixed', bottom: 0, left: 0, width: '100%' }}>
-        <BottomNavigation
-          showLabels
-          value={value}
-          onChange={(event, newValue) => {
-            setValue(newValue);
-          }}>
-          <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
-          <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
-          <BottomNavigationAction label="Nearby" icon={<LocationOnIcon />} />
-          <BottomNavigationAction label="Nearby" icon={<LocationOnIcon />} />
-        </BottomNavigation>
-      </Box>
     </>
   );
 }
 
-export default function themeApp() {
-  const theme = RootTheme();
-
-  return <App />;
-}
+export default SearchPage;

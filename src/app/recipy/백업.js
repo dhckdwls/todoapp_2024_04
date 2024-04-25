@@ -14,6 +14,7 @@ import {
   Navigation as NavigationIcon,
   Forum as ForumIcon,
   Receipt as ReceiptIcon,
+  Search as SearchIcon,
 } from '@mui/icons-material';
 
 function App() {
@@ -39,7 +40,7 @@ function App() {
           }}>
           <BottomNavigationAction label="쇼핑" icon={<ShoppingBagIcon />} />
           <BottomNavigationAction label="레시피" icon={<ReceiptIcon />} />
-          <BottomNavigationAction label="커뮤니티" icon={<ForumIcon />} />
+          <BottomNavigationAction label="자유게시판" icon={<ForumIcon />} />
           <BottomNavigationAction label="길찾기" icon={<NavigationIcon />} />
           <BottomNavigationAction label="마이페이지" icon={<PersonIcon />} />
         </BottomNavigation>

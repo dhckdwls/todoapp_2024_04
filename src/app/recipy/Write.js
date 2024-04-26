@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useRef } from 'react';
-
 import {
   AppBar,
   Toolbar,
@@ -41,6 +40,7 @@ function Write() {
     newFiles.splice(index, 1);
     setFiles(newFiles);
   };
+
   return (
     <>
       <div style={{ border: '2px solid red' }}>
@@ -89,9 +89,18 @@ function Write() {
           <List>
             {files.map((file, index) => (
               <ListItem key={index}>
+                {/* 파일이 이미지인 경우에만 이미지를 표시 */}
+                {file.type.startsWith('image/') && (
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={`Photo ${index + 1}`}
+                    style={{ marginRight: '10px', height: '50px' }}
+                  />
+                )}
+                {/* 파일 이름 또는 미리보기를 표시 */}
                 <ListItemText primary={file.name} />
                 <Button onClick={() => handleFileDelete(index)} color="error" size="small">
-                  <CloseIcon></CloseIcon>
+                  <CloseIcon />
                 </Button>
               </ListItem>
             ))}

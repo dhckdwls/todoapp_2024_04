@@ -1,5 +1,5 @@
 // src/pages/api/articles.js
-import pool from '../../lib/db';
+import pool from '../../app/lib/db';
 
 export default async function handler(req, res) {
   try {

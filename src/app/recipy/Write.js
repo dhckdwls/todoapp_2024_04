@@ -1,11 +1,8 @@
 'use client';
 import React, { useState, useRef } from 'react';
+import axios from 'axios';
 import {
-  AppBar,
-  Toolbar,
   Box,
-  BottomNavigation,
-  BottomNavigationAction,
   TextField,
   Button,
   List,
@@ -18,14 +15,22 @@ import {
 } from '@mui/material';
 
 import CloseIcon from '@mui/icons-material/Close';
-import RestoreIcon from '@mui/icons-material/Restore';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 
-function Write() {
+const Write = ({ noticeSnackbarStatus }) => {
   const [boardId, setBoardId] = React.useState('');
-  const handleChange = (event) => {
+  const [title, setTitle] = React.useState('');
+  const [content, setContent] = React.useState('');
+
+  const boardChange = (event) => {
     setBoardId(event.target.value);
+  };
+
+  const titleChange = (event) => {
+    setTitle(event.target.value);
+  };
+
+  const contentChange = (event) => {
+    setContent(event.target.value);
   };
 
   const [files, setFiles] = useState([]);
@@ -41,10 +46,27 @@ function Write() {
     setFiles(newFiles);
   };
 
+  const aritlceWrite = (event) => {
+    event.preventDefault();
+
+    axios
+      .post('/api/articleWrite', {
+        boardId: boardId,
+        title: title,
+        content: content,
+      })
+      .then((response) => {
+        noticeSnackbarStatus.open(`글이 작성되었습니다.`, `success`);
+      })
+      .catch((error) => {
+        noticeSnackbarStatus.open(`글 작성에 실패했습니다.`, `error`);
+      });
+  };
+
   return (
     <>
       <div style={{ border: '2px solid red' }}>
-        <form action="">
+        <form action="" onSubmit={aritlceWrite}>
           <div
             style={{ border: '2px solid red' }}
             className="tw-flex tw-items-center tw-justify-around">
@@ -56,7 +78,7 @@ function Write() {
                   labelId="boardId-label"
                   id="boardId-select"
                   value={boardId}
-                  onChange={handleChange}>
+                  onChange={boardChange}>
                   <MenuItem value={1}>회원레시피</MenuItem>
                   <MenuItem value={2}>유튜버레시피</MenuItem>
                   <MenuItem value={3}>자유게시판</MenuItem>
@@ -67,63 +89,32 @@ function Write() {
           <div
             className="tw-flex tw-items-center tw-justify-around"
             style={{ border: '2px solid red' }}>
-            <div>제목 :</div> <TextField sx={{ width: '70%' }} />
+            <div>제목 :</div>{' '}
+            <TextField name="title" sx={{ width: '70%' }} value={title} onChange={titleChange} />
           </div>
-
-          <Button
-            sx={{ width: '100%' }}
-            variant="contained"
-            className="tw-font-bold"
-            onClick={() => inputFileRef.current.click()} // 파일 선택 창 열기
-          >
-            파일 첨부하기
-          </Button>
-          <input
-            type="file"
-            ref={inputFileRef}
-            style={{ display: 'none' }}
-            onChange={handleFileUpload}
-            accept="image/*, video/*" // 이미지 파일과 동영상 파일만 허용
-            multiple // 여러 파일 선택 가능
-          />
-          <List>
-            {files.map((file, index) => (
-              <ListItem key={index}>
-                {/* 파일이 이미지인 경우에만 이미지를 표시 */}
-                {file.type.startsWith('image/') && (
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt={`Photo ${index + 1}`}
-                    style={{ marginRight: '10px', height: '50px' }}
-                  />
-                )}
-                {/* 파일 이름 또는 미리보기를 표시 */}
-                <ListItemText primary={file.name} />
-                <Button onClick={() => handleFileDelete(index)} color="error" size="small">
-                  <CloseIcon />
-                </Button>
-              </ListItem>
-            ))}
-          </List>
 
           <TextField
             style={{ width: '100%' }}
-            minRows={17}
-            maxRows={17}
+            minRows={20}
+            maxRows={20}
             multiline
             name="content"
             autoComplete="off"
             label="내용을 입력해주세요"
+            value={content}
+            onChange={contentChange}
           />
 
           <div className="tw-flex tw-justify-around">
             <Button variant="contained">작성 취소</Button>
-            <Button variant="contained">작성 하기</Button>
+            <Button type="submit" variant="contained">
+              작성 하기
+            </Button>
           </div>
         </form>
       </div>
     </>
   );
-}
+};
 
 export default Write;

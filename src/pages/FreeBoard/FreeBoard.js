@@ -59,42 +59,41 @@ function FreeBoard() {
         <CustomTabPanel value={value} index={0}></CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
           <div>
-            <table>
-              <tr>
-                <th>번호</th>
-                <th>제목</th>
-                <th>작성자</th>
-                <th>좋아요</th>
-                <th>수정일</th>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>테스트 제목</td>
-                <td>테스트 작성자</td>
-                <td>10</td>
-                <td>2024-04-27</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>테스트 제목</td>
-                <td>테스트 작성자</td>
-                <td>10</td>
-                <td>2024-04-27</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>테스트 제목</td>
-                <td>테스트 작성자</td>
-                <td>10</td>
-                <td>2024-04-27</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>테스트 제목</td>
-                <td>테스트 작성자</td>
-                <td>10</td>
-                <td>2024-04-27</td>
-              </tr>
+            <table className="tw-table tw-align-center">
+              <thead>
+                <tr>
+                  <th>번호</th>
+                  <th>작성자</th>
+                  <th>제목</th>
+                  <th>작성날짜</th>
+                  <th>좋아요</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>1</th>
+                  <td>
+                    <div className="tw-flex tw-items-center tw-gap-3">
+                      <div className="tw-avatar">
+                        <div className="tw-mask tw-mask-squircle tw-w-12 tw-h-12">
+                          <img src="https://picsum.photos/200/300" />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="tw-font-bold">홍길동</div>
+                        <div className="tw-text-sm tw-opacity-50">무엇을 넣을지 고민</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    안녕하세요
+                    <br />
+                    <span className="tw-badge tw-badge-ghost tw-badge-sm">댓글수</span>
+                  </td>
+                  <td>2024-04-23</td>
+                  <th>10</th>
+                </tr>
+              </tbody>
             </table>
           </div>
         </CustomTabPanel>

@@ -20,7 +20,6 @@ const Write = ({ noticeSnackbarStatus }) => {
   const [boardId, setBoardId] = useState('');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [files, setFiles] = useState([]);
 
   const boardChange = (event) => {
     setBoardId(event.target.value);
@@ -34,29 +33,10 @@ const Write = ({ noticeSnackbarStatus }) => {
     setContent(event.target.value);
   };
 
-  const inputFileRef = useRef(null);
-
-  // 파일 업로드 함수
-  const handleFileUpload = (e) => {
-    const newFiles = Array.from(e.target.files);
-    setFiles([...files, ...newFiles]);
-  };
-
-  // 파일 삭제 함수
-  const handleFileDelete = (index) => {
-    const newFiles = [...files];
-    newFiles.splice(index, 1);
-    setFiles(newFiles);
-  };
-
-  // 글 작성 함수
-  const handleArticleWrite = async (event) => {
+  const write = async (event) => {
     event.preventDefault();
 
     try {
-      // 파일 업로드
-      const uploadedFilesInfo = await uploadFiles(files);
-
       // 글 작성
       const response = await axios.post('/api/articleWrite', {
         boardId: boardId,
@@ -72,30 +52,10 @@ const Write = ({ noticeSnackbarStatus }) => {
     }
   };
 
-  // 파일 업로드 함수
-  const uploadFiles = async (files) => {
-    const formData = new FormData();
-    files.forEach((file) => {
-      formData.append('file', file);
-    });
-
-    try {
-      const response = await axios.post('/api/filesUpload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error uploading files:', error);
-      throw new Error('Failed to upload files');
-    }
-  };
-
   return (
     <>
       <div style={{ border: '2px solid red' }}>
-        <form action="" onSubmit={handleArticleWrite}>
+        <form action="" onSubmit={write}>
           <div
             style={{ border: '2px solid red' }}
             className="tw-flex tw-items-center tw-justify-around">
@@ -121,41 +81,6 @@ const Write = ({ noticeSnackbarStatus }) => {
             <div>제목 :</div>{' '}
             <TextField name="title" sx={{ width: '70%' }} value={title} onChange={titleChange} />
           </div>
-          <Button
-            sx={{ width: '100%' }}
-            variant="contained"
-            className="tw-font-bold"
-            onClick={() => inputFileRef.current.click()} // 파일 선택 창 열기
-          >
-            파일 첨부하기
-          </Button>
-          <input
-            type="file"
-            ref={inputFileRef}
-            style={{ display: 'none' }}
-            onChange={handleFileUpload}
-            accept="image/*, video/*" // 이미지 파일과 동영상 파일만 허용
-            multiple // 여러 파일 선택 가능
-          />
-          <List>
-            {files.map((file, index) => (
-              <ListItem key={index}>
-                {/* 파일이 이미지인 경우에만 이미지를 표시 */}
-                {file.type.startsWith('image/') && (
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt={`Photo ${index + 1}`}
-                    style={{ marginRight: '10px', height: '50px' }}
-                  />
-                )}
-                {/* 파일 이름 또는 미리보기를 표시 */}
-                <ListItemText primary={file.name} />
-                <Button onClick={() => handleFileDelete(index)} color="error" size="small">
-                  <CloseIcon />
-                </Button>
-              </ListItem>
-            ))}
-          </List>
 
           <TextField
             style={{ width: '100%' }}

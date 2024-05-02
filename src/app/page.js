@@ -1,12 +1,15 @@
 'use client';
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import { RecoilRoot, atom, selector, useRecoilState, useRecoilValue } from 'recoil';
+import dateToStr from './dateUtil';
 import classNames from 'classnames';
 import RootTheme from './theme';
 import MyPage from './mypage/MyPage';
 import RecipyList from './RecipyList/RecipyList';
 import FreeBoard from '@/pages/FreeBoard/FreeBoard';
 import Write from './recipy/Write';
-
+import RecipyDetail from './recipy/recipyDetail';
 import {
   AppBar,
   Toolbar,
@@ -76,6 +79,15 @@ function useNoticeSnackbarStatus() {
 function App() {
   const [bottomValue, setBottomValue] = React.useState(0);
   const noticeSnackbarStatus = useNoticeSnackbarStatus();
+
+  const [selectedArticleId, setSelectedArticleId] = useState('');
+
+  const test = (articleId) => {
+    setSelectedArticleId(articleId);
+    alert(articleId);
+    setBottomValue(3);
+  };
+
   return (
     <>
       <AppBar position="fixed">
@@ -85,9 +97,14 @@ function App() {
       <NoticeSnackbar status={noticeSnackbarStatus} />
 
       {bottomValue == 0 && <Write noticeSnackbarStatus={noticeSnackbarStatus} />}
-      {bottomValue == 1 && <RecipyList />}
+      {bottomValue == 1 && <RecipyList test={test} />}
       {bottomValue == 2 && <FreeBoard />}
-      {bottomValue == 3 && <div className="navigation">길찾기</div>}
+      {bottomValue == 3 && (
+        <RecipyDetail
+          noticeSnackbarStatus={noticeSnackbarStatus}
+          selectedArticleId={selectedArticleId}
+        />
+      )}
       {bottomValue == 4 && <MyPage />}
 
       <Box sx={{ height: '50px' }} />
@@ -112,5 +129,9 @@ function App() {
 export default function themeApp() {
   const theme = RootTheme();
 
-  return <App />;
+  return (
+    <>
+      <App />
+    </>
+  );
 }

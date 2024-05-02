@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
 import { RecoilRoot } from 'recoil';
 import { ThemeProvider } from '@mui/material/styles';
 import { Container, ButtonGroup, Button } from '@mui/material';
@@ -14,9 +16,33 @@ import '../globals.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-function RecipyList() {
+const RecipyList = ({ test }) => {
   const [isPressed1, setIsPressed1] = useState(true);
   const [isPressed2, setIsPressed2] = useState(false);
+  //아티클
+
+  const [articles, setArticles] = useState([]);
+
+  useEffect(() => {
+    // API 호출하여 글 목록을 가져옴
+    const fetchArticles = async () => {
+      try {
+        const response = await axios.get('/api/getArticles');
+        setArticles(response.data);
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+      }
+    };
+
+    fetchArticles();
+  }, []); // 마운트될 때 한 번만 호출
+
+  useEffect(() => {
+    // 여기서 articles의 변경을 감지하여 필요한 작업을 수행합니다.
+    console.log('Articles changed:', articles);
+  }, [articles]); // articles 값이 변경될 때만 이 useEffect가 실행됩니다.
+
+  //아티클 끝
 
   const handleButtonClick1 = () => {
     setIsPressed1(true);
@@ -201,104 +227,32 @@ function RecipyList() {
             </div>
           </div>
         </div>
-        <div className="recipe_list">
-          <img
-            src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDAxMTFfNTIg%2FMDAxNzA0OTQ0MjMxNzE2.Wbx2U8JUNvX8AMICUP1yhJTfAr6meUJ-GXAM5BT3Yccg.T1xkyO4diCOE95Tai073Fs153sYm0jNvTuUdKtGEjNog.JPEG.7hansollee%2Fgfgdfgdffg.JPG&type=sc960_832"
-            alt=""
-          />
-          <div className="recipe_info">
-            <p>고기남자</p>
-            <p>유튜브 제목 들어갈 자리</p>
-            <div className="views">
-              <FaUser />
-              <span>500</span>
-            </div>
-          </div>
-        </div>
-        <div className="recipe_list">
-          <img src="https://cdn.class101.net/images/ff5fbbb5-35a7-4fee-8540-35a0a120066e" alt="" />
-          <div className="recipe_info">
-            <p>정육왕</p>
-            <p>유튜브 제목 들어갈 자리</p>
-            <div className="views">
-              <FaUser />
-              <span>500</span>
-            </div>
-          </div>
-        </div>
-        <div className="recipe_list">
-          <img
-            src="https://i.namu.wiki/i/nQJW2e_q6_y8kEDDoQQm-uqQxcp9kdpEt5GXcdPj5KFGiHLfz5OYnWztz2FYImuC-3S6lUxX7undv90l_8_jPg.webp"
-            alt=""
-          />
-          <div className="recipe_info">
-            <p>육식맨</p>
-            <p>유튜브 제목 들어갈 자리</p>
-            <div className="views">
-              <FaUser />
-              <span>500</span>
-            </div>
-          </div>
-        </div>
-        <div className="recipe_list">
-          <img
-            src="https://i.namu.wiki/i/Xp4MMRlKcjkKf5CNoTmUcUjUL5VFfg9FvvWpT4U1XdXgSHqA1K5g2u3HT-n_3aJcsVufREe3GBTw3NBcUPab2g.webp"
-            alt=""
-          />
-          <div className="recipe_info">
-            <p>승우아빠</p>
-            <p>유튜브 제목 들어갈 자리</p>
-            <div className="views">
-              <FaUser />
-              <span>500</span>
-            </div>
-          </div>
-        </div>
-        <div className="recipe_list">
-          <img
-            src="https://i.namu.wiki/i/LWNmFEecKVs4e0rXZS52gnDvzSZ-PUfNh6zGZCD-1XCLR2bRRX-cpnUGv9KvqvaJLtPTDQPVfCkXgbdHGV0C4Nkr8-a8U-bfITZpgcmrmxPHFDPEQh7aFb-XYFQDo7uhlGmBq0nGJRCF7XAjOF-F3w.webp"
-            alt=""
-          />
-          <div className="recipe_info">
-            <p>취요남</p>
-            <p>유튜브 제목 들어갈 자리</p>
-            <div className="views">
-              <FaUser />
-              <span>500</span>
-            </div>
-          </div>
-        </div>
-        <div className="recipe_list">
-          <img src="https://dimg.donga.com/wps/NEWS/IMAGE/2018/10/23/92539689.2.jpg" alt="" />
-          <div className="recipe_info">
-            <p>백종원</p>
-            <p>유튜브 제목 들어갈 자리</p>
-            <div className="views">
-              <FaUser />
-              <span>500</span>
-            </div>
-          </div>
-        </div>
       </div>
       {/* 멤버 */}
       <div className="member_recipe" style={{ display: isPressed1 ? 'none' : 'block' }}>
-        <div className="recipe_list">
-          <img
-            src="https://americanmeat.co.kr/wp-content/uploads/2020/09/USMEF_%EB%AC%B8%EC%B8%A0101%ED%81%B4%EB%A0%88%EC%8A%A4_img1-1024x1024.png"
-            alt=""
-          />
-          <div className="recipe_info">
-            <p>문츠</p>
-            <p>유튜브 제목 들어갈 자리</p>
-            <div className="views">
-              <FaUser />
-              <span>500</span>
-            </div>
-          </div>
-        </div>
+        <ul>
+          {articles.map((article) => (
+            <li
+              className="recipe_list"
+              key={article.id}
+              onClick={() => {
+                test(article.id);
+              }}>
+              <img src="https://americanmeat.co.kr/wp-content/uploads/2020/09/USMEF_%EB%AC%B8%EC%B8%A0101%ED%81%B4%EB%A0%88%EC%8A%A4_img1-1024x1024.png" />
+              <div className="recipe_info">
+                <p>작성자</p>
+                <p>제목 : {article.title}</p>
+                <div className="views">
+                  <FaUser />
+                  <span>{article.hitPoint}</span>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     </>
   );
-}
+};
 
 export default RecipyList;

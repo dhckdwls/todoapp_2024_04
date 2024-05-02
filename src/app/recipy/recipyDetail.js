@@ -1,15 +1,107 @@
-import * as React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
 
-import { Box, TextField, Button } from '@mui/material';
+import { Box, TextField, Button, Typography, Modal } from '@mui/material';
 
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+//modal
+//모달창 스타일
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
-function RecipyDetail() {
-  const [bottomValue, setBottomValue] = React.useState(0);
+// modal 열기, 닫기
+function useEditReplyModalStatus() {
+  const [opened, setOpened] = React.useState(false);
+
+  const open = () => {
+    setOpened(true);
+  };
+
+  const close = () => {
+    setOpened(false);
+  };
+
+  return {
+    opened,
+    open,
+    close,
+  };
+}
+
+const ReplyModal = ({ status }) => {
+  return (
+    <>
+      <Modal
+        open={status.opened}
+        onClose={status.close}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description">
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            댓글 수정
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            <TextField
+              style={{ width: '100%' }}
+              id="outlined-basic"
+              label="댓글 수정"
+              variant="outlined"
+            />
+            <Button variant="contained">수정하기</Button>
+            <Button variant="contained" onClick={status.close}>
+              수정취소
+            </Button>
+          </Typography>
+        </Box>
+      </Modal>
+    </>
+  );
+};
+
+//modal 여기까지
+
+const RecipyDetail = ({ noticeSnackbarStatus, selectedArticleId }) => {
+  const editReplyModalStatus = useEditReplyModalStatus();
+  const id = selectedArticleId;
+  const [article, setArticle] = useState(null);
+
+  const replyWrite = (event) => {
+    event.preventDefault();
+    alert('안녕');
+  };
+
+  useEffect(() => {
+    // API 호출하여 글 목록을 가져옴
+    const fetchArticle = async () => {
+      try {
+        const response = await axios.post('/api/article', { id });
+        setArticle(response.data);
+      } catch (error) {
+        console.error('Error fetching article:', error);
+      }
+    };
+
+    fetchArticle();
+  }, []); // 마운트될 때 한 번만 호출
+
+  const test = () => {
+    alert('안녕');
+  };
 
   return (
     <>
+      <Button onClick={test}>테스트</Button>
+      <ReplyModal status={editReplyModalStatus} />
       <div style={{ padding: '10px' }} className="title-box tw-flex tw-justify-between">
         <div>
           <ArrowBackIosNewIcon />
@@ -22,11 +114,8 @@ function RecipyDetail() {
         <div style={{ textAlign: 'center' }}>
           <img
             style={{ width: '100px', Height: '100px', border: '2px solid red' }}
-            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAeFBMVEX///8AAAA5OTlISEjk5OSampr8/PzCwsKNjY3q6uqlpaXy8vLFxcVwcHBoaGjLy8sYGBgeHh7e3t5PT08/Pz8QEBAoKCjW1tZUVFTu7u6CgoK2trawsLB8fHy7u7uUlJQsLCwyMjKhoaFaWlojIyOHh4dlZWVERERowodxAAAEu0lEQVR4nO2ca3eiMBCGRQUvVPFCRa1Yaa3+/3+4LpNgvdSSMEim533O2S824cyQZG4ZttUCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGiKbs8fzY9xOz7OR36v27Q43LysX70r0pemheKj279Rj+j/jZUcjO6rlzMaNC1edfoP9MvXsWkBK5JML/WZLrLF1U+TpGkhqzD8psl8vU0GwenHYJD0vubf/jJsWkx7zicw3lwfuMGwcz6NjUjHwFJr8Hl/IyafesDyyZIxoRWMox+HJLFkFcdK+PeHo97VqPGTpGJEi/7zAhJRqRfhID3lCla/jlxNaGjvCVIxEir397uCJxWVgwxrl4qTAwldLu7sCjyKLyRz2ezBcLgLtHOJy4ecZJbaNUrEzFsu8M5gxi6f8VaTPPxkpfzEdyJZi0jifhrNWRq/lCYZW0gbSTKn5Atjw1mxIJ9I4YxvOMsXFNhQVjgznDUTlClmpq6C2Imxpl3LxRgZxHnNQlZxYzxvk8+TUJYaWno2ejMSqlJrS7NPTmZdg0Tc0HmymJjPS9nl4WdcSUMJ7iJPficWEydS4rZDpTWUoGG1cyhhl6Z/3tL0rcJSHZhKuGyjEsbWeN5WTCFjZum5vyzX/vmEU7vcIk9JpiJS4HmF/HBei0TcfOSymt60UI7/UYtE3NBqLAKjSUEm5hi2dMXbzCqSJRWR4rd0LrswmpNZ5s3NEHjGyaxq2jDb2Q1CtsYrc3lIDDxBduY/4d7Q9JOD2YtZQh25lQ4yKZwREbEVqE6ZcpZDHUKzq5ymUff4pZZlo8aKCNjOqIvrEgZVmSVRd9w5WvDfkozUk2ZHC3RjaftRoX628MyMklPo1fH8n05YWLTXSihe3LDZafG9/fCepwv9STFiJyVeOzOLve+8rq+vXKL0YoAXC0krNL53SzpMwjAMTv+ij3vd7aa3xk2yOvc4H6/UmF63eXvnVuG5mMb9qPi8ohO1ooX3iMVpxFlHId0mOkbxJlRSfNv/qN+eDEyvMDkiDE5xBNeFAX053NXvUIQxwVr/JuAwahc3vdhxq22aXWiXpduL9DHSx9N516+bnzs3Xj4Ik43//pV+vfubJLxxkKE+jY63Q+stahOjaAfp9EbdVhJSvx7zO4+nMVMi2jZU6I+I3A1vlNG3T4SUihNXCzbj6qZCGSpH77pV+anaPbUKWJ0sSoUUq7Wr7bCArgReXSzaqD1aNXoecOyEWki4tpcKa91r4aM0iaPmSbXWI8OTWFFfcnG0h6qPhFyrLnYYw2YK3jssz2KDmkNfeTx1QFbZrXR4zBoz++65/RUdHa5gS12xlr9/rB+f8RT+p+9cGrVgM6QEmdMd2/MqQ3EI5xfnS5b4iI9hpazwOU+sxpJ5k+pt6sz/QxDkma/px2qPiZ3KhCno5v1SInUq/KbUl/fDup5TiTAVrHnLR7Z9uPVA6Q7zQ9mSMQaC3CpkzE/NcuvlhqmhtucD81PzjeFIU/SAOSgl+g5FNaThrsPLziENVdWhFtz4aBYaytew1fldUktcqUaFo3Y9jNxwFgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4a/wDhGgqmCFJVUcAAAAASUVORK5CYII="
+            src="https://picsum.photos/id/237/200/300"
           />
-          <Button variant="contained" href="#contained-buttons" sx={{ width: '100px' }}>
-            친구추가
-          </Button>
         </div>
       </div>
       <div className="img-box tw-border-2 tw-border-red-500 ">
@@ -50,42 +139,39 @@ function RecipyDetail() {
       <div className="reply-box tw-p-[10px]">
         <ul>
           <li className="tw-flex tw-items-center">
-            <img
-              style={{ width: '50px', height: '50px', border: '2px solid red' }}
-              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAeFBMVEX///8AAAA5OTlISEjk5OSampr8/PzCwsKNjY3q6uqlpaXy8vLFxcVwcHBoaGjLy8sYGBgeHh7e3t5PT08/Pz8QEBAoKCjW1tZUVFTu7u6CgoK2trawsLB8fHy7u7uUlJQsLCwyMjKhoaFaWlojIyOHh4dlZWVERERowodxAAAEu0lEQVR4nO2ca3eiMBCGRQUvVPFCRa1Yaa3+/3+4LpNgvdSSMEim533O2S824cyQZG4ZttUCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGiKbs8fzY9xOz7OR36v27Q43LysX70r0pemheKj279Rj+j/jZUcjO6rlzMaNC1edfoP9MvXsWkBK5JML/WZLrLF1U+TpGkhqzD8psl8vU0GwenHYJD0vubf/jJsWkx7zicw3lwfuMGwcz6NjUjHwFJr8Hl/IyafesDyyZIxoRWMox+HJLFkFcdK+PeHo97VqPGTpGJEi/7zAhJRqRfhID3lCla/jlxNaGjvCVIxEir397uCJxWVgwxrl4qTAwldLu7sCjyKLyRz2ezBcLgLtHOJy4ecZJbaNUrEzFsu8M5gxi6f8VaTPPxkpfzEdyJZi0jifhrNWRq/lCYZW0gbSTKn5Atjw1mxIJ9I4YxvOMsXFNhQVjgznDUTlClmpq6C2Imxpl3LxRgZxHnNQlZxYzxvk8+TUJYaWno2ejMSqlJrS7NPTmZdg0Tc0HmymJjPS9nl4WdcSUMJ7iJPficWEydS4rZDpTWUoGG1cyhhl6Z/3tL0rcJSHZhKuGyjEsbWeN5WTCFjZum5vyzX/vmEU7vcIk9JpiJS4HmF/HBei0TcfOSymt60UI7/UYtE3NBqLAKjSUEm5hi2dMXbzCqSJRWR4rd0LrswmpNZ5s3NEHjGyaxq2jDb2Q1CtsYrc3lIDDxBduY/4d7Q9JOD2YtZQh25lQ4yKZwREbEVqE6ZcpZDHUKzq5ymUff4pZZlo8aKCNjOqIvrEgZVmSVRd9w5WvDfkozUk2ZHC3RjaftRoX628MyMklPo1fH8n05YWLTXSihe3LDZafG9/fCepwv9STFiJyVeOzOLve+8rq+vXKL0YoAXC0krNL53SzpMwjAMTv+ij3vd7aa3xk2yOvc4H6/UmF63eXvnVuG5mMb9qPi8ohO1ooX3iMVpxFlHId0mOkbxJlRSfNv/qN+eDEyvMDkiDE5xBNeFAX053NXvUIQxwVr/JuAwahc3vdhxq22aXWiXpduL9DHSx9N516+bnzs3Xj4Ik43//pV+vfubJLxxkKE+jY63Q+stahOjaAfp9EbdVhJSvx7zO4+nMVMi2jZU6I+I3A1vlNG3T4SUihNXCzbj6qZCGSpH77pV+anaPbUKWJ0sSoUUq7Wr7bCArgReXSzaqD1aNXoecOyEWki4tpcKa91r4aM0iaPmSbXWI8OTWFFfcnG0h6qPhFyrLnYYw2YK3jssz2KDmkNfeTx1QFbZrXR4zBoz++65/RUdHa5gS12xlr9/rB+f8RT+p+9cGrVgM6QEmdMd2/MqQ3EI5xfnS5b4iI9hpazwOU+sxpJ5k+pt6sz/QxDkma/px2qPiZ3KhCno5v1SInUq/KbUl/fDup5TiTAVrHnLR7Z9uPVA6Q7zQ9mSMQaC3CpkzE/NcuvlhqmhtucD81PzjeFIU/SAOSgl+g5FNaThrsPLziENVdWhFtz4aBYaytew1fldUktcqUaFo3Y9jNxwFgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4a/wDhGgqmCFJVUcAAAAASUVORK5CYII="
-            />
+            <img style={{ width: '50px', height: '50px', border: '2px solid red' }} src="" />
             <div style={{ marginLeft: '30px' }}>
-              안녕하세요 반갑습니다 안녕하세요 반갑습니다 안녕하세요
-              반갑습니다ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ
-              <div>좋아요 ,싫어요, 답글,수정,삭제</div>
-            </div>
-          </li>
-          <li className="tw-flex tw-items-center">
-            <img
-              style={{ width: '50px', height: '50px', border: '2px solid red' }}
-              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAeFBMVEX///8AAAA5OTlISEjk5OSampr8/PzCwsKNjY3q6uqlpaXy8vLFxcVwcHBoaGjLy8sYGBgeHh7e3t5PT08/Pz8QEBAoKCjW1tZUVFTu7u6CgoK2trawsLB8fHy7u7uUlJQsLCwyMjKhoaFaWlojIyOHh4dlZWVERERowodxAAAEu0lEQVR4nO2ca3eiMBCGRQUvVPFCRa1Yaa3+/3+4LpNgvdSSMEim533O2S824cyQZG4ZttUCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGiKbs8fzY9xOz7OR36v27Q43LysX70r0pemheKj279Rj+j/jZUcjO6rlzMaNC1edfoP9MvXsWkBK5JML/WZLrLF1U+TpGkhqzD8psl8vU0GwenHYJD0vubf/jJsWkx7zicw3lwfuMGwcz6NjUjHwFJr8Hl/IyafesDyyZIxoRWMox+HJLFkFcdK+PeHo97VqPGTpGJEi/7zAhJRqRfhID3lCla/jlxNaGjvCVIxEir397uCJxWVgwxrl4qTAwldLu7sCjyKLyRz2ezBcLgLtHOJy4ecZJbaNUrEzFsu8M5gxi6f8VaTPPxkpfzEdyJZi0jifhrNWRq/lCYZW0gbSTKn5Atjw1mxIJ9I4YxvOMsXFNhQVjgznDUTlClmpq6C2Imxpl3LxRgZxHnNQlZxYzxvk8+TUJYaWno2ejMSqlJrS7NPTmZdg0Tc0HmymJjPS9nl4WdcSUMJ7iJPficWEydS4rZDpTWUoGG1cyhhl6Z/3tL0rcJSHZhKuGyjEsbWeN5WTCFjZum5vyzX/vmEU7vcIk9JpiJS4HmF/HBei0TcfOSymt60UI7/UYtE3NBqLAKjSUEm5hi2dMXbzCqSJRWR4rd0LrswmpNZ5s3NEHjGyaxq2jDb2Q1CtsYrc3lIDDxBduY/4d7Q9JOD2YtZQh25lQ4yKZwREbEVqE6ZcpZDHUKzq5ymUff4pZZlo8aKCNjOqIvrEgZVmSVRd9w5WvDfkozUk2ZHC3RjaftRoX628MyMklPo1fH8n05YWLTXSihe3LDZafG9/fCepwv9STFiJyVeOzOLve+8rq+vXKL0YoAXC0krNL53SzpMwjAMTv+ij3vd7aa3xk2yOvc4H6/UmF63eXvnVuG5mMb9qPi8ohO1ooX3iMVpxFlHId0mOkbxJlRSfNv/qN+eDEyvMDkiDE5xBNeFAX053NXvUIQxwVr/JuAwahc3vdhxq22aXWiXpduL9DHSx9N516+bnzs3Xj4Ik43//pV+vfubJLxxkKE+jY63Q+stahOjaAfp9EbdVhJSvx7zO4+nMVMi2jZU6I+I3A1vlNG3T4SUihNXCzbj6qZCGSpH77pV+anaPbUKWJ0sSoUUq7Wr7bCArgReXSzaqD1aNXoecOyEWki4tpcKa91r4aM0iaPmSbXWI8OTWFFfcnG0h6qPhFyrLnYYw2YK3jssz2KDmkNfeTx1QFbZrXR4zBoz++65/RUdHa5gS12xlr9/rB+f8RT+p+9cGrVgM6QEmdMd2/MqQ3EI5xfnS5b4iI9hpazwOU+sxpJ5k+pt6sz/QxDkma/px2qPiZ3KhCno5v1SInUq/KbUl/fDup5TiTAVrHnLR7Z9uPVA6Q7zQ9mSMQaC3CpkzE/NcuvlhqmhtucD81PzjeFIU/SAOSgl+g5FNaThrsPLziENVdWhFtz4aBYaytew1fldUktcqUaFo3Y9jNxwFgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4a/wDhGgqmCFJVUcAAAAASUVORK5CYII="
-            />
-            <div style={{ marginLeft: '30px' }}>
-              안녕하세요 반갑습니다 안녕하세요 반갑습니다 안녕하세요
-              반갑습니다ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ
-              <div>좋아요 ,싫어요, 답글,수정,삭제</div>
+              <h1>작성자 : 홍길동</h1>
+              <h1>수정일 : 20204-04-30 09:07:17</h1>
+              내용
+              <div>
+                <Button variant="contained">좋아요</Button>
+                <Button variant="contained">싫어요</Button>
+                <Button variant="contained">답글</Button>
+                <Button variant="contained" onClick={editReplyModalStatus.open}>
+                  수정
+                </Button>
+                <Button variant="contained">삭제</Button>
+              </div>
             </div>
           </li>
         </ul>
       </div>
-      <div style={{ border: '2px solid red' }} className="reply-write-box tw-flex">
-        <Box component="form" className="tw-flex-1">
+      <div>
+        <form action="" className="tw-flex" onSubmit={replyWrite}>
           <TextField
             style={{ width: '100%' }}
             id="outlined-basic"
             label="댓글 작성"
             variant="outlined"
+            name="content"
           />
-        </Box>
-        <Button variant="contained" href="#contained-buttons">
-          작성3
-        </Button>
+          <Button type="submit" variant="contained" href="#contained-buttons">
+            작성
+          </Button>
+        </form>
       </div>
+
       <Button
         style={{ marginTop: '10px' }}
         variant="contained"
@@ -95,5 +181,5 @@ function RecipyDetail() {
       </Button>
     </>
   );
-}
+};
 export default RecipyDetail;

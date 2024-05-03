@@ -17,13 +17,9 @@ import '../globals.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-const RecipyList = ({ articlesStatus }) => {
+const RecipyList = ({ articlesStatus, showDetail }) => {
   const navigate = useNavigate();
 
-  const test = (id) => {
-    console.log(id);
-    navigate(`/detail/${id}`); // 해당 아티클의 ID를 이용하여 상세 페이지 URL로 이동합니다.
-  };
   const [isPressed1, setIsPressed1] = useState(true);
   const [isPressed2, setIsPressed2] = useState(false);
 
@@ -215,7 +211,7 @@ const RecipyList = ({ articlesStatus }) => {
       <div className="member_recipe" style={{ display: isPressed1 ? 'none' : 'block' }}>
         <ul>
           {articlesStatus.articles.map((article) => (
-            <li className="recipe_list" key={article.id} onClick={() => test(article.id)}>
+            <li className="recipe_list" key={article.id} onClick={() => showDetail(article.id)}>
               <img src="https://americanmeat.co.kr/wp-content/uploads/2020/09/USMEF_%EB%AC%B8%EC%B8%A0101%ED%81%B4%EB%A0%88%EC%8A%A4_img1-1024x1024.png" />
               <div className="recipe_info">
                 <p>작성자</p>

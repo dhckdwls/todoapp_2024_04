@@ -215,7 +215,7 @@ function App() {
         <div>안녕</div>
         <div>안녕</div>
       </div>
-      <Write articlesStatus={articlesStatus} noticeSnackbarStatus={noticeSnackbarStatus} />
+      {/* <Write articlesStatus={articlesStatus} noticeSnackbarStatus={noticeSnackbarStatus} /> */}
       <RecipyDetail noticeSnackbarStatus={noticeSnackbarStatus} repliesStatus={repliesStatus} />
 
       <Box sx={{ height: '50px' }} />
@@ -241,10 +241,12 @@ export default function themeApp() {
   const theme = RootTheme();
 
   return (
-    <RecoilRoot>
-      {' '}
-      {/* 리코일 루트로 감싸기 */}
-      <App />
-    </RecoilRoot>
+    <Router>
+      <RecoilRoot>
+        {' '}
+        {/* 리코일 루트로 감싸기 */}
+        <App />
+      </RecoilRoot>
+    </Router>
   );
 }

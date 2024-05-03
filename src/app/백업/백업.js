@@ -1,24 +1,19 @@
 'use client';
-//리액트
 import React, { useState, useEffect, useRef } from 'react';
-//리코일
 import { atom, useRecoilState, RecoilRoot } from 'recoil';
-//리액트 라우터 돔
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
-//db연결을 위한 axios
+
 import axios from 'axios';
-//날짜 변환 유틸
 import dateToStr from './dateUtil';
-//className 사용하게 해주는거
 import classNames from 'classnames';
-//테마 입히는거
 import RootTheme from './theme';
 
-//컴포넌트화 시킨 파일들
-import Write from './ocj/Write';
-import RecipyDetail from './ocj/recipyDetail';
-
-//mui 컴포넌트
+import MyPage from './mypage/MyPage';
+import RecipyList from './RecipyList/RecipyList';
+import FreeBoard from '@/pages/FreeBoard/FreeBoard';
+import Write from './recipy/Write';
+import RecipyDetail from './recipy/recipyDetail';
+import Detail from './Recipe/detail';
 import {
   AppBar,
   Toolbar,
@@ -29,7 +24,6 @@ import {
   Alert,
 } from '@mui/material';
 
-//아이콘
 import {
   Person as PersonIcon,
   ShoppingBag as ShoppingBagIcon,
@@ -86,8 +80,6 @@ function useNoticeSnackbarStatus() {
 }
 //스낵바 알림창 여기까지
 
-//article 관련 스테이터스
-
 const articlesAtom = atom({
   key: 'app/articlesAtom',
   default: [],
@@ -100,7 +92,7 @@ function useArticlesStatus() {
     // API 호출하여 글 목록을 가져옴
     const fetchArticles = async () => {
       try {
-        const response = await axios.get('/api/recipy/getArticles');
+        const response = await axios.get('/api/getArticles');
         setArticles(response.data);
       } catch (error) {
         console.error('Error fetching articles:', error);
@@ -118,8 +110,7 @@ function useArticlesStatus() {
       boardId,
       title,
       content,
-      regDate: dateToStr(new Date()),
-      updateDate: dateToStr(new Date()), // Assuming dateToStr is defined elsewhere
+      regDate: dateToStr(new Date()), // Assuming dateToStr is defined elsewhere
     };
     setArticles((prevArticles) => [newArticle, ...prevArticles]);
   };
@@ -152,57 +143,13 @@ function useArticlesStatus() {
     findArticleById,
   };
 }
-//article 관련 스테이터스 끝
-
-//reply 관련 스테이터스
-
-const repliesAtom = atom({
-  key: 'app/repliesAtom',
-  default: [],
-});
-
-function useRepliesStatus() {
-  const [replies, setReplies] = useRecoilState(repliesAtom);
-
-  useEffect(() => {
-    // API 호출하여 댓글 목록을 가져옴
-    const fetchReplies = async () => {
-      try {
-        const response = await axios.get('/api/reply/getReplies');
-        setReplies(response.data);
-      } catch (error) {
-        console.error('Error fetching replies:', error);
-      }
-    };
-
-    fetchReplies();
-  }, []); // 마운트될
-
-  // 작성
-  const replyWrite = (content) => {
-    const id = articles.length + 1; // Get the new id based on the current length of the articles array
-    const newReply = {
-      id,
-      regDate: dateToStr(new Date()),
-      updateDate: dateToStr(new Date()), // Assuming dateToStr is defined elsewhere
-      content,
-    };
-    setReplies((prevReplies) => [newReply, ...prevReplies]);
-  };
-
-  return {
-    replies,
-    setReplies,
-    replyWrite,
-  };
-}
-//reply 관련 스테이터스 끝
 
 function App() {
   const [bottomValue, setBottomValue] = React.useState(0);
   const noticeSnackbarStatus = useNoticeSnackbarStatus();
   const articlesStatus = useArticlesStatus();
-  const repliesStatus = useRepliesStatus();
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -211,12 +158,38 @@ function App() {
       </AppBar>
       <Toolbar />
       <NoticeSnackbar status={noticeSnackbarStatus} />
-      <div className="tw-flex">
-        <div>안녕</div>
-        <div>안녕</div>
-      </div>
-      <Write articlesStatus={articlesStatus} noticeSnackbarStatus={noticeSnackbarStatus} />
-      <RecipyDetail noticeSnackbarStatus={noticeSnackbarStatus} repliesStatus={repliesStatus} />
+
+      <RecipyList articlesStatus={articlesStatus} />
+      <Routes>
+        <Route path="/Recipe/detail" element={<Detail />} />
+      </Routes>
+
+      {/* {bottomValue == 0 && (
+        <Write noticeSnackbarStatus={noticeSnackbarStatus} articlesStatus={articlesStatus} />
+      )}
+      {bottomValue == 1 && <RecipyList articlesStatus={articlesStatus} />}
+      {bottomValue == 2 && <FreeBoard />}
+      {bottomValue == 3 && <RecipyDetail noticeSnackbarStatus={noticeSnackbarStatus} />}
+      {bottomValue == 4 && <MyPage />}
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Write noticeSnackbarStatus={noticeSnackbarStatus} articlesStatus={articlesStatus} />
+          }
+        />
+        <Route
+          path="/RecipyList/RecipyList"
+          element={<RecipyList articlesStatus={articlesStatus} />}
+        />
+        <Route path="/freeboard" element={<FreeBoard />} />
+        <Route
+          path="/recipy/recipydetail/:id"
+          element={<RecipyDetail noticeSnackbarStatus={noticeSnackbarStatus} />}
+        />
+        <Route path="/mypage" element={<MyPage />} />
+      </Routes> */}
 
       <Box sx={{ height: '50px' }} />
       <Box sx={{ position: 'fixed', bottom: 0, left: 0, width: '100%' }}>
@@ -241,10 +214,12 @@ export default function themeApp() {
   const theme = RootTheme();
 
   return (
-    <RecoilRoot>
-      {' '}
-      {/* 리코일 루트로 감싸기 */}
-      <App />
-    </RecoilRoot>
+    <Router>
+      <RecoilRoot>
+        {' '}
+        {/* 리코일 루트로 감싸기 */}
+        <App />
+      </RecoilRoot>
+    </Router>
   );
 }

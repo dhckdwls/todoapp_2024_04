@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import classNames from 'classnames';
 
 import { Box, TextField, Button, Typography, Modal } from '@mui/material';
 
@@ -38,7 +39,12 @@ function useEditReplyModalStatus() {
   };
 }
 
-const ReplyModal = ({ status }) => {
+const ReplyModal = ({ status, noticeSnackbarStatus }) => {
+  const close = () => {
+    status.close;
+    noticeSnackbarStatus.open('댓글 수정 취소됨', 'error');
+  };
+
   return (
     <>
       <Modal
@@ -50,7 +56,7 @@ const ReplyModal = ({ status }) => {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             댓글 수정
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          <div>
             <TextField
               style={{ width: '100%' }}
               id="outlined-basic"
@@ -58,10 +64,10 @@ const ReplyModal = ({ status }) => {
               variant="outlined"
             />
             <Button variant="contained">수정하기</Button>
-            <Button variant="contained" onClick={status.close}>
+            <Button variant="contained" onClick={close}>
               수정취소
             </Button>
-          </Typography>
+          </div>
         </Box>
       </Modal>
     </>
@@ -70,12 +76,51 @@ const ReplyModal = ({ status }) => {
 
 //modal 여기까지
 
-const RecipyDetail = ({ noticeSnackbarStatus }) => {
+const RecipyDetail = ({ noticeSnackbarStatus, repliesStatus }) => {
   const editReplyModalStatus = useEditReplyModalStatus();
+
+  useEffect(() => {
+    const fetchReplies = async () => {
+      try {
+        const response = await axios.get('/api/reply/getReplies');
+        repliesStatus.setReplies(response.data);
+      } catch (error) {
+        console.error('Error fetching replies:', error);
+      }
+    };
+
+    fetchReplies();
+  }, [repliesStatus.setReplies]);
+
+  const [content, setContent] = useState('');
+
+  const handleCommentChange = (event) => {
+    setContent(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      // Send comment to the server
+      await axios.post('/api/reply/write', {
+        content,
+      });
+
+      // Update UI or state as needed (e.g., clear input field, update comment list)
+      setContent(''); // Clear input field after submission
+
+      // Display success message
+      noticeSnackbarStatus.open('댓글이 작성되었습니다.', 'success');
+    } catch (error) {
+      // Display error message
+      noticeSnackbarStatus.open('댓글 작성에 실패했습니다.', 'error');
+    }
+  };
 
   return (
     <>
-      <ReplyModal status={editReplyModalStatus} />
+      <ReplyModal status={editReplyModalStatus} noticeSnackbarStatus={noticeSnackbarStatus} />
       <div style={{ padding: '10px' }} className="title-box tw-flex tw-justify-between">
         <div>
           <ArrowBackIosNewIcon />
@@ -109,35 +154,39 @@ const RecipyDetail = ({ noticeSnackbarStatus }) => {
       <div className="content-box">내용</div>
       <div className="reply-box tw-p-[10px]">
         <ul>
-          <li className="tw-flex tw-items-center">
-            <img style={{ width: '50px', height: '50px', border: '2px solid red' }} src="" />
-            <div style={{ marginLeft: '30px' }}>
-              <h1>작성자 : 홍길동</h1>
-              <h1>수정일 : 20204-04-30 09:07:17</h1>
-              내용
-              <div>
-                <Button variant="contained">좋아요</Button>
-                <Button variant="contained">싫어요</Button>
-                <Button variant="contained">답글</Button>
-                <Button variant="contained" onClick={editReplyModalStatus.open}>
-                  수정
-                </Button>
-                <Button variant="contained">삭제</Button>
+          {repliesStatus.replies.map((reply) => (
+            <li className="tw-flex tw-items-center" key={reply.id}>
+              <img style={{ width: '50px', height: '50px', border: '2px solid red' }} src="" />
+              <div style={{ marginLeft: '30px' }}>
+                <h1>작성자 : {reply.author}</h1>
+                <h1>수정일 : {reply.updateDate}</h1>
+                <p>{reply.content}</p>
+                <div>
+                  <Button variant="contained">좋아요</Button>
+                  <Button variant="contained">싫어요</Button>
+                  <Button variant="contained">답글</Button>
+                  <Button variant="contained" onClick={editReplyModalStatus.open}>
+                    수정
+                  </Button>
+                  <Button variant="contained">삭제</Button>
+                </div>
               </div>
-            </div>
-          </li>
+            </li>
+          ))}
         </ul>
       </div>
       <div>
-        <form action="" className="tw-flex">
+        <form action="" className="tw-flex" onSubmit={handleSubmit}>
           <TextField
             style={{ width: '100%' }}
-            id="outlined-basic"
-            label="댓글 작성"
-            variant="outlined"
+            multiline
             name="content"
+            autoComplete="off"
+            label="댓글을 입력해주세요"
+            value={content}
+            onChange={handleCommentChange}
           />
-          <Button type="submit" variant="contained" href="#contained-buttons">
+          <Button variant="contained" type="submit">
             작성
           </Button>
         </form>

@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
     // Insert the new article into the database
     const [result] = await pool.execute(
-      'INSERT INTO article (title, content, boardId) VALUES (?, ?, ?)',
+      'INSERT INTO article (regDate, updateDate, title, content, boardId) VALUES (NOW(), NOW(),?, ?, ?)',
       [title, content, boardId],
     );
 

@@ -16,7 +16,7 @@ import {
 
 import CloseIcon from '@mui/icons-material/Close';
 
-const Write = ({ noticeSnackbarStatus }) => {
+const Write = ({ noticeSnackbarStatus, articlesStatus }) => {
   const [boardId, setBoardId] = useState('');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -35,6 +35,7 @@ const Write = ({ noticeSnackbarStatus }) => {
 
   const write = async (event) => {
     event.preventDefault();
+    articlesStatus.articleWrite(boardId, title, content);
 
     try {
       // 글 작성

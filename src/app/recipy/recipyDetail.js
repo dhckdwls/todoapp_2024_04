@@ -70,43 +70,17 @@ const ReplyModal = ({ status }) => {
 
 //modal 여기까지
 
-const RecipyDetail = ({ noticeSnackbarStatus, selectedArticleId }) => {
+const RecipyDetail = ({ noticeSnackbarStatus }) => {
   const editReplyModalStatus = useEditReplyModalStatus();
-  const id = selectedArticleId;
-  const [article, setArticle] = useState(null);
-
-  const replyWrite = (event) => {
-    event.preventDefault();
-    alert('안녕');
-  };
-
-  useEffect(() => {
-    // API 호출하여 글 목록을 가져옴
-    const fetchArticle = async () => {
-      try {
-        const response = await axios.post('/api/article', { id });
-        setArticle(response.data);
-      } catch (error) {
-        console.error('Error fetching article:', error);
-      }
-    };
-
-    fetchArticle();
-  }, []); // 마운트될 때 한 번만 호출
-
-  const test = () => {
-    alert('안녕');
-  };
 
   return (
     <>
-      <Button onClick={test}>테스트</Button>
       <ReplyModal status={editReplyModalStatus} />
       <div style={{ padding: '10px' }} className="title-box tw-flex tw-justify-between">
         <div>
           <ArrowBackIosNewIcon />
           <h1>회원 바베큐 레시피</h1>
-          <h1>제목 : ~~~</h1>
+          <h1>제목</h1>
           좋아요 수 : 10 댓글수 : 10
           <Button variant="contained">수정하기</Button>
           <Button variant="contained">삭제하기</Button>
@@ -132,10 +106,7 @@ const RecipyDetail = ({ noticeSnackbarStatus, selectedArticleId }) => {
         </ul>
       </div>
 
-      <div className="content-box">
-        준비재료 : 앞다리살 600g, 양념 1통 , 양파 반개 고기를 삶는다 삶을때 양파를 넣어준다 그 후에
-        양넘을 발라서 구워준다
-      </div>
+      <div className="content-box">내용</div>
       <div className="reply-box tw-p-[10px]">
         <ul>
           <li className="tw-flex tw-items-center">
@@ -158,7 +129,7 @@ const RecipyDetail = ({ noticeSnackbarStatus, selectedArticleId }) => {
         </ul>
       </div>
       <div>
-        <form action="" className="tw-flex" onSubmit={replyWrite}>
+        <form action="" className="tw-flex">
           <TextField
             style={{ width: '100%' }}
             id="outlined-basic"

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { RecoilRoot } from 'recoil';
@@ -16,33 +17,15 @@ import '../globals.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-const RecipyList = ({ test }) => {
+const RecipyList = ({ articlesStatus }) => {
+  const navigate = useNavigate();
+
+  const test = (id) => {
+    console.log(id);
+    navigate(`/detail/${id}`); // 해당 아티클의 ID를 이용하여 상세 페이지 URL로 이동합니다.
+  };
   const [isPressed1, setIsPressed1] = useState(true);
   const [isPressed2, setIsPressed2] = useState(false);
-  //아티클
-
-  const [articles, setArticles] = useState([]);
-
-  useEffect(() => {
-    // API 호출하여 글 목록을 가져옴
-    const fetchArticles = async () => {
-      try {
-        const response = await axios.get('/api/getArticles');
-        setArticles(response.data);
-      } catch (error) {
-        console.error('Error fetching articles:', error);
-      }
-    };
-
-    fetchArticles();
-  }, []); // 마운트될 때 한 번만 호출
-
-  useEffect(() => {
-    // 여기서 articles의 변경을 감지하여 필요한 작업을 수행합니다.
-    console.log('Articles changed:', articles);
-  }, [articles]); // articles 값이 변경될 때만 이 useEffect가 실행됩니다.
-
-  //아티클 끝
 
   const handleButtonClick1 = () => {
     setIsPressed1(true);
@@ -231,13 +214,8 @@ const RecipyList = ({ test }) => {
       {/* 멤버 */}
       <div className="member_recipe" style={{ display: isPressed1 ? 'none' : 'block' }}>
         <ul>
-          {articles.map((article) => (
-            <li
-              className="recipe_list"
-              key={article.id}
-              onClick={() => {
-                test(article.id);
-              }}>
+          {articlesStatus.articles.map((article) => (
+            <li className="recipe_list" key={article.id} onClick={() => test(article.id)}>
               <img src="https://americanmeat.co.kr/wp-content/uploads/2020/09/USMEF_%EB%AC%B8%EC%B8%A0101%ED%81%B4%EB%A0%88%EC%8A%A4_img1-1024x1024.png" />
               <div className="recipe_info">
                 <p>작성자</p>

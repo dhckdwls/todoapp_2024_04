@@ -13,7 +13,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: '100%',
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -39,11 +39,43 @@ function useEditReplyModalStatus() {
   };
 }
 
-const ReplyModal = ({ status, noticeSnackbarStatus }) => {
+const ReplyModal = ({ status, noticeSnackbarStatus, repliesStatus, replyId }) => {
   const close = () => {
-    status.close;
+    status.close();
     noticeSnackbarStatus.open('댓글 수정 취소됨', 'error');
   };
+
+  const modify = async (id, content) => {
+    try {
+      await axios.post('/api/reply/modify', { id, content });
+      noticeSnackbarStatus.open('댓글이 수정 되었습니다.', 'success');
+    } catch (error) {
+      noticeSnackbarStatus.open('댓글 수정에 실패했습니다.', 'error');
+    }
+    repliesStatus.replyModify(id, content);
+    status.close();
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault(); // 폼 제출의 기본 동작 막기
+    modify(replyId, editedContent);
+  };
+
+  // repliesStatus에서 replies에 replyId와 일치하는 reply 가져오도록 만드는 함수
+
+  const findReplyById = (id) => {
+    return repliesStatus.replies.find((reply) => reply.id === id);
+  };
+
+  // replyId와 일치하는 댓글 찾기
+  const reply = findReplyById(replyId);
+  // 텍스트 필드의 내용이 변경될 때 호출되는 함수
+  const handleContentChange = (event) => {
+    if (event.target.value !== reply.content) {
+      setEditedContent(event.target.value); // 텍스트 필드에 입력된 값을 상태에 저장
+    }
+  };
+  const [editedContent, setEditedContent] = useState('');
 
   return (
     <>
@@ -56,18 +88,26 @@ const ReplyModal = ({ status, noticeSnackbarStatus }) => {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             댓글 수정
           </Typography>
-          <div>
-            <TextField
-              style={{ width: '100%' }}
-              id="outlined-basic"
-              label="댓글 수정"
-              variant="outlined"
-            />
-            <Button variant="contained">수정하기</Button>
-            <Button variant="contained" onClick={close}>
-              수정취소
-            </Button>
-          </div>
+          <form action="" onSubmit={handleSubmit}>
+            <div>
+              <TextField
+                style={{ width: '100%' }}
+                multiline
+                id="outlined-basic"
+                label="댓글 수정"
+                variant="outlined"
+                name="content"
+                defaultValue={editedContent || (reply ? reply.content : '')} // 텍스트 필드에 입력된 값이 있으면 그 값을 표시, 아니면 원래 댓글의 내용 표시
+                onChange={handleContentChange}
+              />
+              <Button variant="contained" type="submit">
+                수정하기
+              </Button>
+              <Button variant="contained" onClick={close}>
+                수정취소
+              </Button>
+            </div>
+          </form>
         </Box>
       </Modal>
     </>
@@ -77,50 +117,67 @@ const ReplyModal = ({ status, noticeSnackbarStatus }) => {
 //modal 여기까지
 
 const RecipyDetail = ({ noticeSnackbarStatus, repliesStatus }) => {
+  //모달창열고닫는거
   const editReplyModalStatus = useEditReplyModalStatus();
-
-  useEffect(() => {
-    const fetchReplies = async () => {
-      try {
-        const response = await axios.get('/api/reply/getReplies');
-        repliesStatus.setReplies(response.data);
-      } catch (error) {
-        console.error('Error fetching replies:', error);
-      }
-    };
-
-    fetchReplies();
-  }, [repliesStatus.setReplies]);
-
+  //댓글 입력받는 곳의 값(댓글의 content)
   const [content, setContent] = useState('');
-
-  const handleCommentChange = (event) => {
+  //입력값 변하면 그대로 반영하도록
+  const handleContentChange = (event) => {
     setContent(event.target.value);
   };
 
-  const handleSubmit = async (event) => {
+  //댓글 작성 할때
+  const replyWrite = async (event) => {
+    //페이지 넘어가는거 막는거
     event.preventDefault();
 
     try {
-      // Send comment to the server
+      //write로 보내기 content 심어서
       await axios.post('/api/reply/write', {
         content,
       });
+      //댓글입력창 다시 비워주기
+      setContent('');
 
-      // Update UI or state as needed (e.g., clear input field, update comment list)
-      setContent(''); // Clear input field after submission
-
-      // Display success message
+      //성공 메시지
       noticeSnackbarStatus.open('댓글이 작성되었습니다.', 'success');
     } catch (error) {
-      // Display error message
+      // 실패 메시지
       noticeSnackbarStatus.open('댓글 작성에 실패했습니다.', 'error');
     }
+    // 작성된 댓글을 상태에 추가
+    repliesStatus.replyWrite(content);
+  };
+  //댓글 삭제
+  const replyDelete = async (id) => {
+    try {
+      // 서버로 댓글 삭제 요청
+      await axios.post('/api/reply/delete', { id });
+      // 상태에서 댓글 삭제
+      repliesStatus.replyDelete(id);
+      // 성공 메시지
+      noticeSnackbarStatus.open('댓글이 삭제되었습니다.', 'success');
+    } catch (error) {
+      // 실패 메시지
+      noticeSnackbarStatus.open('댓글 삭제에 실패했습니다.', 'error');
+    }
+  };
+
+  const [replyId, setReplyId] = useState('');
+
+  const test = (id) => {
+    setReplyId(id);
+    editReplyModalStatus.open();
   };
 
   return (
     <>
-      <ReplyModal status={editReplyModalStatus} noticeSnackbarStatus={noticeSnackbarStatus} />
+      <ReplyModal
+        status={editReplyModalStatus}
+        noticeSnackbarStatus={noticeSnackbarStatus}
+        repliesStatus={repliesStatus}
+        replyId={replyId}
+      />
       <div style={{ padding: '10px' }} className="title-box tw-flex tw-justify-between">
         <div>
           <ArrowBackIosNewIcon />
@@ -165,10 +222,20 @@ const RecipyDetail = ({ noticeSnackbarStatus, repliesStatus }) => {
                   <Button variant="contained">좋아요</Button>
                   <Button variant="contained">싫어요</Button>
                   <Button variant="contained">답글</Button>
-                  <Button variant="contained" onClick={editReplyModalStatus.open}>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      test(reply.id);
+                    }}>
                     수정
                   </Button>
-                  <Button variant="contained">삭제</Button>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      replyDelete(reply.id);
+                    }}>
+                    삭제
+                  </Button>
                 </div>
               </div>
             </li>
@@ -176,7 +243,7 @@ const RecipyDetail = ({ noticeSnackbarStatus, repliesStatus }) => {
         </ul>
       </div>
       <div>
-        <form action="" className="tw-flex" onSubmit={handleSubmit}>
+        <form action="" className="tw-flex" onSubmit={replyWrite}>
           <TextField
             style={{ width: '100%' }}
             multiline
@@ -184,7 +251,7 @@ const RecipyDetail = ({ noticeSnackbarStatus, repliesStatus }) => {
             autoComplete="off"
             label="댓글을 입력해주세요"
             value={content}
-            onChange={handleCommentChange}
+            onChange={handleContentChange}
           />
           <Button variant="contained" type="submit">
             작성

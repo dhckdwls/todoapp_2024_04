@@ -1,8 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import classNames from 'classnames';
-
+import { useParams } from 'react-router-dom';
 import { Box, TextField, Button, Typography, Modal } from '@mui/material';
+
+import useRepliesStatus from '../reply/replyStatus';
+import useArticlesStatus from '../recipy/recipyStatus';
 
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
@@ -116,7 +119,10 @@ const ReplyModal = ({ status, noticeSnackbarStatus, repliesStatus, replyId }) =>
 
 //modal 여기까지
 
-const RecipyDetail = ({ noticeSnackbarStatus, repliesStatus }) => {
+const RecipyDetail = ({ noticeSnackbarStatus }) => {
+  const repliesStatus = useRepliesStatus();
+  const articlesStatus = useArticlesStatus();
+
   //모달창열고닫는거
   const editReplyModalStatus = useEditReplyModalStatus();
   //댓글 입력받는 곳의 값(댓글의 content)
@@ -164,14 +170,35 @@ const RecipyDetail = ({ noticeSnackbarStatus, repliesStatus }) => {
   };
 
   const [replyId, setReplyId] = useState('');
-
-  const test = (id) => {
+  //수정하기 버튼 눌렀을때 모달창 열리게 하는거
+  const modify = (id) => {
     setReplyId(id);
     editReplyModalStatus.open();
   };
 
+  const { id } = useParams(); // URL에서 id 매개변수 가져오기
+
+  // 선택한 article 찾기
+  const [article, setArticle] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post('/api/recipy/getArticle', { id });
+        setArticle(response.data);
+        console.log(response.data); // 업데이트된 데이터 확인
+      } catch (error) {
+        console.error('Error fetching article:', error);
+      }
+    };
+
+    fetchData();
+  }, [id]); // id가 변경될 때마다 실행되도록 의존성 배열에 추가
+
   return (
     <>
+      <div>안녕</div>
+      <div>{article.id}</div>
       <ReplyModal
         status={editReplyModalStatus}
         noticeSnackbarStatus={noticeSnackbarStatus}
@@ -182,7 +209,7 @@ const RecipyDetail = ({ noticeSnackbarStatus, repliesStatus }) => {
         <div>
           <ArrowBackIosNewIcon />
           <h1>회원 바베큐 레시피</h1>
-          <h1>제목</h1>
+          <h1></h1>
           좋아요 수 : 10 댓글수 : 10
           <Button variant="contained">수정하기</Button>
           <Button variant="contained">삭제하기</Button>
@@ -225,7 +252,7 @@ const RecipyDetail = ({ noticeSnackbarStatus, repliesStatus }) => {
                   <Button
                     variant="contained"
                     onClick={() => {
-                      test(reply.id);
+                      modify(reply.id);
                     }}>
                     수정
                   </Button>

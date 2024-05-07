@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import useArticlesStatus from '../recipy/recipyStatus';
 
-import axios from 'axios';
-import classNames from 'classnames';
-
-const ShowList = ({ articlesStatus }) => {
+const ShowList = () => {
+  const articlesStatus = useArticlesStatus();
   return (
     <>
       <div>안녕</div>
@@ -12,9 +12,12 @@ const ShowList = ({ articlesStatus }) => {
         <ul>
           {articlesStatus.articles.map((article) => (
             <li key={article.id}>
-              <h1>{article.id}</h1>
-              <h1>{article.title}</h1>
-              <h1>{article.content}</h1>
+              <Link to={`/detail/${article.id}`}>
+                {/* Link 추가 */}
+                <h1>{article.id}</h1>
+                <h1>{article.title}</h1>
+                <h1>{article.content}</h1>
+              </Link>
             </li>
           ))}
         </ul>

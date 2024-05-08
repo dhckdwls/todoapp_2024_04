@@ -3,9 +3,9 @@ import axios from 'axios';
 import classNames from 'classnames';
 import { useParams } from 'react-router-dom';
 import { Box, TextField, Button, Typography, Modal } from '@mui/material';
-
-import useRepliesStatus from '../reply/replyStatus';
-import useArticlesStatus from '../recipy/recipyStatus';
+import { Link } from 'react-router-dom';
+import useRepliesStatus from '@/app/reply/replyStatus';
+import useArticlesStatus from '../RecipyStatus';
 
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
@@ -122,6 +122,14 @@ const ReplyModal = ({ status, noticeSnackbarStatus, repliesStatus, replyId }) =>
 const RecipyDetail = ({ noticeSnackbarStatus }) => {
   const repliesStatus = useRepliesStatus();
   const articlesStatus = useArticlesStatus();
+  const { id } = useParams();
+  const numericId = parseInt(id, 10);
+  const article = articlesStatus.findArticleById(numericId);
+  const replies = repliesStatus.replies.filter(
+    (reply) => reply.relId === numericId && reply.relTypeCode === 'article',
+  );
+  const relId = numericId;
+  const relTypeCode = 'article';
 
   //모달창열고닫는거
   const editReplyModalStatus = useEditReplyModalStatus();
@@ -141,6 +149,8 @@ const RecipyDetail = ({ noticeSnackbarStatus }) => {
       //write로 보내기 content 심어서
       await axios.post('/api/reply/write', {
         content,
+        relId,
+        relTypeCode,
       });
       //댓글입력창 다시 비워주기
       setContent('');
@@ -152,8 +162,9 @@ const RecipyDetail = ({ noticeSnackbarStatus }) => {
       noticeSnackbarStatus.open('댓글 작성에 실패했습니다.', 'error');
     }
     // 작성된 댓글을 상태에 추가
-    repliesStatus.replyWrite(content);
+    repliesStatus.replyWrite(content, relId, relTypeCode);
   };
+
   //댓글 삭제
   const replyDelete = async (id) => {
     try {
@@ -176,29 +187,8 @@ const RecipyDetail = ({ noticeSnackbarStatus }) => {
     editReplyModalStatus.open();
   };
 
-  const { id } = useParams(); // URL에서 id 매개변수 가져오기
-
-  // 선택한 article 찾기
-  const [article, setArticle] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.post('/api/recipy/getArticle', { id });
-        setArticle(response.data);
-        console.log(response.data); // 업데이트된 데이터 확인
-      } catch (error) {
-        console.error('Error fetching article:', error);
-      }
-    };
-
-    fetchData();
-  }, [id]); // id가 변경될 때마다 실행되도록 의존성 배열에 추가
-
   return (
     <>
-      <div>안녕</div>
-      <div>{article.id}</div>
       <ReplyModal
         status={editReplyModalStatus}
         noticeSnackbarStatus={noticeSnackbarStatus}
@@ -209,9 +199,11 @@ const RecipyDetail = ({ noticeSnackbarStatus }) => {
         <div>
           <ArrowBackIosNewIcon />
           <h1>회원 바베큐 레시피</h1>
-          <h1></h1>
+          <h1>{article.title}</h1>
           좋아요 수 : 10 댓글수 : 10
-          <Button variant="contained">수정하기</Button>
+          <Link to={`/recipy/modify/${id}`}>
+            <Button variant="contained">수정하기</Button>
+          </Link>
           <Button variant="contained">삭제하기</Button>
         </div>
         <div style={{ textAlign: 'center' }}>
@@ -234,11 +226,10 @@ const RecipyDetail = ({ noticeSnackbarStatus }) => {
           </li>
         </ul>
       </div>
-
-      <div className="content-box">내용</div>
+      <div className="content-box">{article.content}</div>
       <div className="reply-box tw-p-[10px]">
         <ul>
-          {repliesStatus.replies.map((reply) => (
+          {replies.map((reply) => (
             <li className="tw-flex tw-items-center" key={reply.id}>
               <img style={{ width: '50px', height: '50px', border: '2px solid red' }} src="" />
               <div style={{ marginLeft: '30px' }}>
@@ -285,7 +276,6 @@ const RecipyDetail = ({ noticeSnackbarStatus }) => {
           </Button>
         </form>
       </div>
-
       <Button
         style={{ marginTop: '10px' }}
         variant="contained"

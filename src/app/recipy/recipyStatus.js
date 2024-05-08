@@ -1,4 +1,4 @@
-// 경로 : src/app/recipy/recipyStatus.js
+// 경로 : src/app/recipy/recipyStatus/recipyStatus.js
 'use client';
 //리액트
 import React, { useState, useEffect, useRef } from 'react';
@@ -7,7 +7,7 @@ import { atom, useRecoilState, RecoilRoot } from 'recoil';
 //db연결을 위한 axios
 import axios from 'axios';
 //날짜 유틸
-import dateToStr from '../Ut/dateUtil';
+import dateToStr from '@/app/Ut/dateUtil';
 
 //article 관련 스테이터스
 const articlesAtom = atom({

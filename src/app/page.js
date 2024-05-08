@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { atom, useRecoilState, RecoilRoot } from 'recoil';
 //리액트 라우터 돔
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+
 //db연결을 위한 axios
 import axios from 'axios';
 //날짜 변환 유틸
@@ -16,11 +16,12 @@ import classNames from 'classnames';
 import RootTheme from './theme';
 
 //컴포넌트화 시킨 파일들
-import Write from './ocj/Write';
-import RecipyDetail from './ocj/RecipyDetail';
-import ShowList from './ocj/ShowList';
+import Write from './recipy/write/Write';
+import RecipyDetail from './recipy/detail/RecipyDetail';
+import ShowList from './recipy/list/List';
+import Modify from './recipy/modify/Modify';
 //게시물 댓글 status
-import useArticlesStatus from './recipy/recipyStatus';
+import useArticlesStatus from './recipy/RecipyStatus';
 import useRepliesStatus from './reply/replyStatus';
 
 //mui 컴포넌트
@@ -91,7 +92,6 @@ function NoticeSnackbar({ status }) {
 }
 
 function App() {
-  const { id } = useParams();
   const [bottomValue, setBottomValue] = React.useState(0);
   const noticeSnackbarStatus = useNoticeSnackbarStatus();
 
@@ -104,13 +104,15 @@ function App() {
         <Toolbar />
         <NoticeSnackbar status={noticeSnackbarStatus} />
 
-        {/* <Write articlesStatus={articlesStatus} noticeSnackbarStatus={noticeSnackbarStatus} /> */}
-        {/* <RecipyDetail noticeSnackbarStatus={noticeSnackbarStatus} repliesStatus={repliesStatus} /> */}
         <Routes>
-          <Route path="/" element={<ShowList id={id} />} />
+          <Route path="/" element={<ShowList />} />
           <Route
-            path="/detail/:id"
+            path="/recipy/detail/:id"
             element={<RecipyDetail noticeSnackbarStatus={noticeSnackbarStatus} />}
+          />
+          <Route
+            path="/recipy/modify/:id"
+            element={<Modify noticeSnackbarStatus={noticeSnackbarStatus} />}
           />
         </Routes>
 

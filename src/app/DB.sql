@@ -20,16 +20,10 @@ CREATE TABLE reply(
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     regDate DATETIME NOT NULL,
     updateDate DATETIME NOT NULL,
+    relId INT NOT NULL,
+    relTypeCode CHAR(50) NOT NULL,
     
     content TEXT
-);
-
-## 상품 관련 테이블 생성
-CREATE TABLE IF NOT EXISTS products (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    NAME VARCHAR(255) NOT NULL,
-    price VARCHAR(50) NOT NULL,
-    imageURL VARCHAR(255) NOT NULL
 );
 
 # board 테이블 생성
@@ -53,47 +47,52 @@ updateDate = NOW(),
 INSERT INTO board
 SET regDate = NOW(),
 updateDate = NOW(),
-`code` = 'YOUTUBER RECIPY',
-`name` = '유튜버 레시피';
-
-INSERT INTO board
-SET regDate = NOW(),
-updateDate = NOW(),
 `code` = 'FREE',
 `name` = '자유게시판';
 
-CREATE table files (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    regDate DATETIME,
-    updateDate DATETIME,
-    
-    relTypeCode CHAR(50),
-    relId INT,
-    
-    
-    fileName VARCHAR(255) NOT NULL,
-    filePath VARCHAR(255) NOT NULL
-    
-);
+## 아티클 TD
+INSERT INTO article
+SET regDate = NOW(),
+updateDate = NOW(),
+boardId = 1,
+title = 'test',
+content = 'test';
 
+## 아티클 TD
+INSERT INTO article
+SET regDate = NOW(),
+updateDate = NOW(),
+boardId = 1,
+title = 'test2',
+content = 'test2';
 
-#############################################################
-select * from files
+## 아티클 TD
+INSERT INTO article
+SET regDate = NOW(),
+updateDate = NOW(),
+boardId = 2,
+title = 'test3',
+content = 'test3';
 
-SELECT * FROM article
-
-select * from reply
-
-select * from board
-
-SELECT * FROM products
-
-delete from article where id = 8
-
-insert into files
-set regDate = now(),
-updateDate = now(),
-relTypeCode = 'recipy',
+## reply TD
+INSERT INTO reply
+SET regDate = NOW(),
+updateDate = NOW(),
 relId = 1,
-fileName = '안녕',
-filePath = '몰라'
+relTypeCode = 'article',
+content = '테스트1';
+
+## reply TD
+INSERT INTO reply
+SET regDate = NOW(),
+updateDate = NOW(),
+relId = 2,
+relTypeCode = 'article',
+content = '테스트2';
+
+
+
+#####################################################################
+
+
+

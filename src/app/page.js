@@ -20,6 +20,7 @@ import Write from './recipy/write/Write';
 import RecipyDetail from './recipy/detail/RecipyDetail';
 import ShowList from './recipy/list/List';
 import Modify from './recipy/modify/Modify';
+import FreeBoard from './my/freearticle';
 //게시물 댓글 status
 import useArticlesStatus from './recipy/RecipyStatus';
 import useRepliesStatus from './reply/replyStatus';
@@ -105,6 +106,7 @@ function App() {
         <NoticeSnackbar status={noticeSnackbarStatus} />
 
         <Routes>
+          {/* <Route path="/" element={<FreeBoard />} /> */}
           <Route path="/" element={<ShowList />} />
           <Route
             path="/recipy/detail/:id"

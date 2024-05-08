@@ -8,13 +8,13 @@ import { useParams } from 'react-router-dom';
 const Modify = ({ noticeSnackbarStatus }) => {
   const articlesStatus = useArticlesStatus();
   const { id } = useParams();
-  const [boardId, setBoardId] = useState('');
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-
   const numericId = parseInt(id, 10);
 
   const article = articlesStatus.findArticleById(numericId);
+
+  const [boardId, setBoardId] = useState(article.boardId); // 기존의 boardId로 초기화
+  const [title, setTitle] = useState(article.title); // 기존의 제목으로 초기화
+  const [content, setContent] = useState(article.content); // 기존의 내용으로 초기화
 
   const boardChange = (event) => {
     setBoardId(event.target.value);
@@ -28,13 +28,15 @@ const Modify = ({ noticeSnackbarStatus }) => {
     setContent(event.target.value);
   };
 
-  const write = async (event) => {
+  //수정
+  const modify = async (event) => {
     event.preventDefault();
-    articlesStatus.articleWrite(boardId, title, content);
+    articlesStatus.articleModify(numericId, boardId, title, content);
 
     try {
-      // 글 작성
-      const response = await axios.post('/api/recipy/articleWrite', {
+      // 글 수정
+      const response = await axios.post('/api/recipy/articleModify', {
+        id: numericId,
         boardId: boardId,
         title: title,
         content: content,
@@ -51,13 +53,13 @@ const Modify = ({ noticeSnackbarStatus }) => {
   return (
     <>
       <div style={{ border: '2px solid red' }}>
-        <form action="" onSubmit={write}>
+        <form action="" onSubmit={modify}>
           <div
             style={{ border: '2px solid red' }}
             className="tw-flex tw-items-center tw-justify-around">
             <div>분류 :</div>
             <Box sx={{ minWidth: '70%' }}>
-              <FormControl fullWidth>
+              <FormControl fullWidth disabled>
                 <InputLabel id="boardId-label">게시판을 골라주세요</InputLabel>
                 <Select
                   labelId="boardId-label"
@@ -65,8 +67,7 @@ const Modify = ({ noticeSnackbarStatus }) => {
                   value={boardId}
                   onChange={boardChange}>
                   <MenuItem value={1}>회원레시피</MenuItem>
-                  <MenuItem value={2}>유튜버레시피</MenuItem>
-                  <MenuItem value={3}>자유게시판</MenuItem>
+                  <MenuItem value={2}>자유게시판</MenuItem>
                 </Select>
               </FormControl>
             </Box>
@@ -91,16 +92,13 @@ const Modify = ({ noticeSnackbarStatus }) => {
           />
 
           <div className="tw-flex tw-justify-around">
-            <Button variant="contained">작성 취소</Button>
+            <Button variant="contained">수정취소</Button>
             <Button type="submit" variant="contained">
-              작성 하기
+              수정하기
             </Button>
           </div>
         </form>
       </div>
-      <div>수정페이지야</div>
-      <div>내가선택한 아이디 :{id}</div>
-      <div>{article.id}</div>
     </>
   );
 };

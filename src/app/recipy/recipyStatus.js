@@ -34,14 +34,14 @@ function useArticlesStatus() {
 
   // 작성
   const articleWrite = (boardId, title, content) => {
-    const id = articles.length + 1; // Get the new id based on the current length of the articles array
+    const id = articles.length + 1;
     const newArticle = {
       id,
       boardId,
       title,
       content,
       regDate: dateToStr(new Date()),
-      updateDate: dateToStr(new Date()), // Assuming dateToStr is defined elsewhere
+      updateDate: dateToStr(new Date()),
     };
     setArticles((prevArticles) => [newArticle, ...prevArticles]);
   };
@@ -66,12 +66,32 @@ function useArticlesStatus() {
     return articles[index];
   };
 
+  //수정
+  const articleModify = (id, boardId, title, content) => {
+    const index = findArticleIndexById(id);
+
+    if (index !== -1) {
+      const modifiedArticle = {
+        ...articles[index],
+        boardId,
+        title,
+        content,
+        updateDate: dateToStr(new Date()),
+      };
+
+      const updatedArticles = [...articles];
+      updatedArticles[index] = modifiedArticle;
+      setArticles(updatedArticles);
+    }
+  };
+
   return {
     articles,
     articleWrite,
     articleDelete,
     findArticleIndexById,
     findArticleById,
+    articleModify,
   };
 }
 //article 관련 스테이터스 끝

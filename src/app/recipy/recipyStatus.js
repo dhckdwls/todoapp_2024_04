@@ -88,10 +88,10 @@ function useArticlesStatus() {
   return {
     articles,
     articleWrite,
-    articleDelete,
     findArticleIndexById,
     findArticleById,
     articleModify,
+    articleDelete,
   };
 }
 //article 관련 스테이터스 끝

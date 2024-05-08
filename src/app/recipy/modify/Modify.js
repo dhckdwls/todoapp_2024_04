@@ -4,11 +4,13 @@ import axios from 'axios';
 import { Box, TextField, Button, InputLabel, MenuItem, FormControl, Select } from '@mui/material';
 import useArticlesStatus from '../RecipyStatus';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Modify = ({ noticeSnackbarStatus }) => {
   const articlesStatus = useArticlesStatus();
   const { id } = useParams();
   const numericId = parseInt(id, 10);
+  const navigate = useNavigate();
 
   const article = articlesStatus.findArticleById(numericId);
 
@@ -43,10 +45,11 @@ const Modify = ({ noticeSnackbarStatus }) => {
       });
 
       // 성공 시 스낵바 메시지 표시
-      noticeSnackbarStatus.open('글이 작성되었습니다.', 'success');
+      noticeSnackbarStatus.open('글이 수정되었습니다.', 'success');
+      navigate(`/recipy/detail/${article.id}`);
     } catch (error) {
       // 실패 시 스낵바 메시지 표시
-      noticeSnackbarStatus.open('글 작성에 실패했습니다.', 'error');
+      noticeSnackbarStatus.open('글 수정에 실패했습니다.', 'error');
     }
   };
 

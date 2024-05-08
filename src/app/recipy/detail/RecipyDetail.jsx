@@ -6,9 +6,11 @@ import { Box, TextField, Button, Typography, Modal } from '@mui/material';
 import { Link } from 'react-router-dom';
 import useRepliesStatus from '@/app/reply/replyStatus';
 import useArticlesStatus from '../RecipyStatus';
+import { useNavigate } from 'react-router-dom';
 
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+
 //modal
 //모달창 스타일
 const style = {
@@ -130,7 +132,7 @@ const RecipyDetail = ({ noticeSnackbarStatus }) => {
   );
   const relId = numericId;
   const relTypeCode = 'article';
-
+  const navigate = useNavigate();
   //모달창열고닫는거
   const editReplyModalStatus = useEditReplyModalStatus();
   //댓글 입력받는 곳의 값(댓글의 content)
@@ -187,6 +189,23 @@ const RecipyDetail = ({ noticeSnackbarStatus }) => {
     editReplyModalStatus.open();
   };
 
+  const goBack = () => {
+    history.goBack();
+  };
+
+  // 글 삭제 함수
+  const handleDelete = async () => {
+    try {
+      const response = await axios.post('/api/recipy/articleDelete', { numericId });
+
+      noticeSnackbarStatus.open('글이 삭제되었습니다.', 'success');
+      navigate('/');
+    } catch (error) {
+      noticeSnackbarStatus.open('글 삭제에 실패했습니다.', 'error');
+    }
+    articlesStatus.articleDelete(numericId);
+  };
+
   return (
     <>
       <ReplyModal
@@ -199,12 +218,14 @@ const RecipyDetail = ({ noticeSnackbarStatus }) => {
         <div>
           <ArrowBackIosNewIcon />
           <h1>회원 바베큐 레시피</h1>
-          <h1>{article.title}</h1>
+          {article && <h1>{article.title}</h1>}
           좋아요 수 : 10 댓글수 : 10
           <Link to={`/recipy/modify/${id}`}>
             <Button variant="contained">수정하기</Button>
           </Link>
-          <Button variant="contained">삭제하기</Button>
+          <Button variant="contained" onClick={handleDelete}>
+            삭제하기
+          </Button>
         </div>
         <div style={{ textAlign: 'center' }}>
           <img
@@ -226,7 +247,7 @@ const RecipyDetail = ({ noticeSnackbarStatus }) => {
           </li>
         </ul>
       </div>
-      <div className="content-box">{article.content}</div>
+      <div className="content-box"> {article && <>{article.content}</>}</div>
       <div className="reply-box tw-p-[10px]">
         <ul>
           {replies.map((reply) => (

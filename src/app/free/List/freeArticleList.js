@@ -20,9 +20,11 @@ export default function FreeArticleList() {
   return (
     <>
       <div>자유게시판 리스트</div>
+
       <Button style={{ width: '100%' }} className="tw-flex" variant="contained">
         자유게시판 글쓰기
       </Button>
+
       <div>
         <ul>
           {articles.map((article) => (

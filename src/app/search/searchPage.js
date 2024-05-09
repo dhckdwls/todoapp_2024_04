@@ -41,7 +41,7 @@ function a11yProps(index) {
   };
 }
 
-function FreeBoard() {
+function SearchPage() {
   const [value, setValue] = useState(0);
 
   const changeTab = (event, newValue) => {
@@ -82,4 +82,4 @@ function FreeBoard() {
   );
 }
 
-export default FreeBoard;
+export default SearchPage;

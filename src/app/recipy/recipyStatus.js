@@ -84,6 +84,23 @@ function useArticlesStatus() {
       setArticles(updatedArticles);
     }
   };
+  //조회수 증가
+  const increaseHitPoint = async (id) => {
+    try {
+      // 서버에 조회수 증가 요청 보내기
+      await axios.post('/api/recipy/increaseHitPoint', { id });
+      // 클라이언트 측에서도 조회수 증가
+      const updatedArticles = articles.map((article) => {
+        if (article.id === id) {
+          return { ...article, hitPoint: article.hitPoint + 1 };
+        }
+        return article;
+      });
+      setArticles(updatedArticles);
+    } catch (error) {
+      console.error('Error increasing hit point:', error);
+    }
+  };
 
   return {
     articles,
@@ -92,6 +109,7 @@ function useArticlesStatus() {
     findArticleById,
     articleModify,
     articleDelete,
+    increaseHitPoint,
   };
 }
 //article 관련 스테이터스 끝

@@ -189,10 +189,6 @@ const RecipyDetail = ({ noticeSnackbarStatus }) => {
     editReplyModalStatus.open();
   };
 
-  const goBack = () => {
-    history.goBack();
-  };
-
   // 글 삭제 함수
   const handleDelete = async () => {
     try {
@@ -206,6 +202,10 @@ const RecipyDetail = ({ noticeSnackbarStatus }) => {
     articlesStatus.articleDelete(numericId);
   };
 
+  const back = () => {
+    navigate('/');
+  };
+
   return (
     <>
       <ReplyModal
@@ -216,9 +216,10 @@ const RecipyDetail = ({ noticeSnackbarStatus }) => {
       />
       <div style={{ padding: '10px' }} className="title-box tw-flex tw-justify-between">
         <div>
-          <ArrowBackIosNewIcon />
+          <ArrowBackIosNewIcon onClick={back} />
           <h1>회원 바베큐 레시피</h1>
           {article && <h1>{article.title}</h1>}
+          {article && <h1>조회수 : {article.hitPoint}</h1>}
           좋아요 수 : 10 댓글수 : 10
           <Link to={`/recipy/modify/${id}`}>
             <Button variant="contained">수정하기</Button>

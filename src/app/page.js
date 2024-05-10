@@ -12,15 +12,13 @@ import axios from 'axios';
 import dateToStr from './Ut/dateUtil';
 //className 사용하게 해주는거
 import classNames from 'classnames';
-//테마 입히는거
-import RootTheme from './theme';
 
 //컴포넌트화 시킨 파일들
 import Write from './recipy/write/Write';
 import RecipyDetail from './recipy/detail/RecipyDetail';
 import ShowList from './recipy/list/List';
 import Modify from './recipy/modify/Modify';
-import FreeBoard from './free/freeArticle';
+import SearchPage from './search/searchPage';
 import FreeArticleList from './free/List/freeArticleList';
 //게시물 댓글 status
 import useArticlesStatus from './recipy/RecipyStatus';
@@ -107,8 +105,8 @@ function App() {
         <NoticeSnackbar status={noticeSnackbarStatus} />
 
         <Routes>
-          {/* <Route path="/" element={<FreeBoard />} /> */}
-          {/* <Route path="/" element={<ShowList />} /> */}
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/recipy/list" element={<ShowList />} />
           <Route path="/" element={<FreeArticleList />} />
 
           <Route
@@ -142,12 +140,8 @@ function App() {
 }
 
 export default function themeApp() {
-  const theme = RootTheme();
-
   return (
     <RecoilRoot>
-      {' '}
-      {/* 리코일 루트로 감싸기 */}
       <App />
     </RecoilRoot>
   );
